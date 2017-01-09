@@ -1,0 +1,21 @@
+[Desktop Entry]
+Categories=Office;Dictionary;Education;Qt
+Comment[en_US]=GoldenDict
+Comment=GoldenDict
+Encoding=UTF-8
+Exec=goldendict
+GenericName[en_US]=Multiformat Dictionary
+GenericName=Multiformat Dictionary
+Icon=goldendict
+MimeType=
+Name[en_US]=GoldenDict
+Name=GoldenDict
+Path=
+StartupNotify=true
+Terminal=false
+TerminalOptions=
+Type=Application
+X-DBUS-ServiceName=
+X-DBUS-StartupType=
+X-KDE-SubstituteUID=false
+X-KDE-Username=
