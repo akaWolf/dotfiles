@@ -14,32 +14,13 @@ alias ..3="cd ../../.."
 alias ..4="cd ../../../.."
 alias ..5="cd ../../../../.."
 
-#alias g='git'
-#alias s='sudo'
-#alias v=vim
-#alias gdb='gdb --quiet' # suppress the introductory and copyright messages
+alias g='git'
+alias s='sudo'
+alias gdb='gdb --quiet' # suppress the introductory and copyright messages
 #alias pacman='pacman-color'
-#alias a='sudo aptitude'
-# provide the same completion support for the 'a' alias as for the aptitude
-# command (taken from /etc/bash_completion.d/aptitude)
-#complete -F _aptitude -o default a
-#alias as='aptitude search'
-#alias ashow='apt-cache show'
-#alias ain='sudo aptitude install'
-#alias aup='sudo aptitude update && sudo aptitude safe-upgrade'
-#alias xo=xdg-open
-# copy with a progress bar
-#alias cpv="rsync -poghb --backup-dir=/tmp/rsync -e /dev/null --progress --"
-# untested rsync aliases (copy/move with progress bar)
-#alias rsynccopy="rsync --partial --progress --append --rsh=ssh -r -h "
-#alias rsyncmove="rsync --partial --progress --append --rsh=ssh -r -h --remove-sent-files"
-#alias sshtunnel="ssh -ND 4711 -v -p 8383 bjornfor@forsman.isa-geek.org"
 
 alias pastebinit='pastebinit -b paste.akawolf.org'
 #alias p='pastebinit'
-
-# for Red Hat based distros
-#test -e /usr/bin/vimx && alias vim='/usr/bin/vimx'
 
 # Compress the cd, ls -l series of commands.
 function cl() {
@@ -62,7 +43,7 @@ function up()
    curl --silent -b "uid=1; identifier=$BINIDENT" -F "file=@$1" -F "filename=$name" -F "api=1" http://bin.akawolf.org/u | awk "{print \"http://bin.akawolf.org/f/\"\$2\"$ext\"}"
 }
 
-#
+# Paste files
 function p()
 {
    for last; do true; done
@@ -81,42 +62,31 @@ function md5comp
    fi
 }
 
-# Pronounce an English word using Merriam-Webster.com
-#pronounce() {
-#	wget -qO- "http://www.m-w.com/dictionary/$@" | grep 'return au' | sed -r "s|.*return au\('([^']*)', '([^'])[^']*'\).*|http://cougar.eb.com/soundc11/\2/\1|";
-#}
-
 # awk calculator (remember to quote arguments if they contain parentheses)
-c ()
+function c
 {
     awk "BEGIN{ pi=4.0*atan2(1.0,1.0); deg=pi/180.0;  print $* }";
 }
 
-h2b ()
+# hex to bin
+function h2b
 {
     arg=$(echo "$1" | awk '{print toupper($0)}')
     echo "obase=2; ibase=16; $arg" | bc
 }
 
-h2d ()
+# hex to dec
+function h2d
 {
     arg=$(echo "$1" | awk '{print toupper($0)}')
     echo "obase=10; ibase=16; $arg" | bc
 }
 
-b2h ()
+# bin to hex
+function b2h
 {
     echo "obase=16; ibase=2; $1" | bc
 }
-
-#ssh()
-#{
-#	if [[ "$2" == "" ]]; then
-#		command ssh "$1" -Xt screen -aAdr -RR work bash
-#	else
-#		command ssh "$@"
-#	fi
-#}
 
 genpasswd() {
 	local len="$1"
@@ -124,50 +94,8 @@ genpasswd() {
 	tr -dc "A-Za-z0-9" < /dev/urandom | head -c "$len"; printf "\n"
 }
 
-#alias cdl='cl'
-# prevent annoying typo's
-#alias lc='cl'
-
-
-#alias cddvr="cd /media/raid/bjornfor/projects/dvr-control"
-#alias gvc=gnome-volume-control
-
-#alias todo='vim $HOME/todo.txt'
-#alias t='todo'
-#alias gtd='vim ~/raid/projects/vim-wiki/index.txt'
-#alias gtd='vim -c "cd %:h" ~/raid/documents/vim-wiki/index.txt'
-
-# Remember 'sudo apt-get install libnotify-bin' for this.
-# Usage: sleep 5; alert
-# (this alias is actually in .bashrc in Ubuntu 10.10)
-#alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1| sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
-
-#export PS1="\[\033[1;30m\]\[\033[1;34m\]\W\[\033[1;30m\] $ "
-#export PS1="\W $ "
-#export PS1="\[\033[1;30m\][\[\033[1;34m\]\u\[\033[1;30m\]@\[\033[0;35m\]\h\[\033[1;30m\]] \[\033[0;37m\]\W \[\033[1;30m\]\$\[\033[0m\] "
-
-#export PS1='\u@\h:\w$(__git_ps1 " [git::%s]")$ '
-
-#export CDPATH=.:~:~/projects
-
-#export EDITOR=vim
-#export BROWSER=firefox
-
 export HISTCONTROL=ignoreboth   # ignorespace + ignoredups
 export HISTSIZE=1000000         # big big history
 export HISTFILESIZE=$HISTSIZE
+export HISTTIMEFORMAT="%h %d %H:%M:%S> "
 shopt -s histappend             # append to history, don't overwrite it
-
-# This is a fix for nixpkgs programs. They get broken fonts on non-NixOS
-# distros without this. Eelco says that this is a regression (it used to work
-# before).
-#export FONTCONFIG_FILE=/etc/fonts/fonts.conf
-
-## Save and reload the history after each command finishes
-##export PROMPT_COMMAND="history -a; history -r; $PROMPT_COMMAND"
-#export PROMPT_COMMAND="history -a; history -n"
-
-# Don't add duplicate ~/.nix-profile/bin to PATH on NixOS
-#if [ "$(. /etc/os-release; echo $ID)" != nixos -a -d $HOME/.nix-profile/bin ]; then
-#    export PATH=$HOME/.nix-profile/bin:$HOME/.nix-profile/sbin:$PATH
-#fi
