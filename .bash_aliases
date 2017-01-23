@@ -19,7 +19,7 @@ alias s='sudo'
 alias gdb='gdb --quiet' # suppress the introductory and copyright messages
 #alias pacman='pacman-color'
 
-alias pastebinit='pastebinit -b paste.akawolf.org'
+alias pastebinit='pastebinit -b https://paste.akawolf.org'
 #alias p='pastebinit'
 
 # Compress the cd, ls -l series of commands.
@@ -40,7 +40,7 @@ function up()
       ext=""
    fi
    name=$(basename "$1")
-   curl --silent -b "uid=1; identifier=$BINIDENT" -F "file=@$1" -F "filename=$name" -F "api=1" http://bin.akawolf.org/u | awk "{print \"http://bin.akawolf.org/f/\"\$2\"$ext\"}"
+   curl --silent -b "uid=1; identifier=$BINIDENT" -F "file=@$1" -F "filename=$name" -F "api=1" https://bin.akawolf.org/u | awk "{print \"https://bin.akawolf.org/f/\"\$2\"$ext\"}"
 }
 
 # Paste files
