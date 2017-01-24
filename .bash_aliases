@@ -91,14 +91,18 @@ function b2h
     echo "obase=16; ibase=2; $1" | bc
 }
 
+# generate password: genpasswd [pass len]
 genpasswd() {
 	local len="$1"
 	test "$len" == "" && len=8
 	tr -dc "A-Za-z0-9" < /dev/urandom | head -c "$len"; printf "\n"
 }
 
+# Add an "alert" alias for long running commands.  Use like so: sleep 10; alert
+alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
 export HISTCONTROL=ignoreboth   # ignorespace + ignoredups
 export HISTSIZE=1000000         # big big history
 export HISTFILESIZE=$HISTSIZE
-export HISTTIMEFORMAT="%h %d %H:%M:%S> "
+#export HISTTIMEFORMAT="%h %d %H:%M:%S> "
 shopt -s histappend             # append to history, don't overwrite it
