@@ -15,3 +15,5 @@ source /usr/share/doc/pkgfile/command-not-found.bash
 
 # usefull aliases
 test -s ~/.bash_aliases && . ~/.bash_aliases || true
+
+test -d ~/bin && PATH=~/bin:$PATH
