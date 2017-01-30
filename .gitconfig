@@ -48,7 +48,7 @@
 	filelog = log -u
 
 	# diff
-	d = diff --word-diff
+	d = diff
 	dc = diff --cached
 
 	# diff last commit
@@ -132,6 +132,16 @@
 
 	# undo from here http://megakemp.com/2016/08/25/git-undo/
 	undo = "!f() { git reset --hard $(git rev-parse --abbrev-ref HEAD)@{${1-1}}; }; f"
+
+[color "diff"]
+	#commit
+	#frag
+	#func
+	#meta
+	new = green bold
+	old = red bold
+	#plain
+	#whitespace
 
 # nicely highlight from https://github.com/git/git/tree/master/contrib/diff-highlight
 [pager]
