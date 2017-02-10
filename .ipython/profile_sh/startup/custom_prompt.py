@@ -15,8 +15,17 @@ class TerminalInteractiveShellCustomPrompt(Prompts):
 		pwd = pwd.replace(homedir, '~', 1)
 		symb = '#' if os.getuid() == 0 else '$'
 		#prompt = [(Token, pwd),(Token.Prompt, ' {} '.format(symb))]
-		prompt = [(Token.PromptNum, '{}:{}{} '.format(user, pwd, symb))]
+		prompt = [ (Token.PromptNum, '{}:{}{} '.format(user, pwd, symb)) ]
 		return prompt
+
+	def continuation_prompt_tokens(self, cli=None, width=None):
+		if width is None:
+			width = self._width()
+		return [ (Token.PromptNum, (' ' * (width - 5)) + '...: ') ]
+
+	def rewrite_prompt_tokens(self):
+		width = self._width()
+		return [ (Token.PromptNum, ('-' * (width - 2)) + '> ') ]
 
 	def out_prompt_tokens(self):
 		return []
