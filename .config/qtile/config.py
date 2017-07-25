@@ -39,6 +39,12 @@ keys = [
 		lazy.layout.rotate()
 	),
 
+	# Move current window to the next stack
+	Key(
+		[mod, "shift"], "h",
+		lazy.layout.client_to_next()
+	),
+
 	# Toggle between split and unsplit sides of stack.
 	# Split = all windows displayed
 	# Unsplit = 1 window displayed, like Max layout, but still with
@@ -51,6 +57,10 @@ keys = [
 	# Toggle between different layouts as defined below
 	Key([mod], "Tab", lazy.next_layout()),
 
+	# Add/Delete stack
+	Key([mod], "t", lazy.layout.add()),
+	Key([mod], "y", lazy.layout.delete()),
+
 	# Close current window
 	Key([mod], "w", lazy.window.kill()),
 
@@ -61,7 +71,8 @@ keys = [
 	Key([mod, "control"], "q", lazy.shutdown()),
 
 	# Run command
-	Key([mod], "r", lazy.spawncmd(prompt = '$')),
+	#Key([mod], "r", lazy.spawncmd(prompt = '$')),
+	Key([mod], "r", lazy.spawn("dmenu_run -l 10 -fn 'ttf-droid' -nf '#26292B' -nb '#FFFFFF' -sb '#606060' -sf '#FFFFFF'")),
 
 	# PrintScreen
 	Key([], "Print", lazy.spawn("spectacle")),
@@ -86,6 +97,9 @@ for i in groups:
 		Key([mod, "shift"], i.name, lazy.window.togroup(i.name))
 	)
 
+dgroups_key_binder = None
+dgroups_app_rules = []
+
 layouts = [
 	layout.Max(),
 	layout.Stack(num_stacks = 2)
@@ -104,8 +118,8 @@ screens = [
 		bottom = bar.Bar(
 			[
 				widget.GroupBox(active = "26292B", inactive = "606060", urgent_text = "FF0000"),
-				widget.Prompt(),
 				widget.Sep(foreground = "606060"),
+				widget.Prompt(),
 				#widget.WindowName(),
 				widget.TaskList(border = "606060", borderwidth = 1),
 				widget.Notify(),
@@ -118,7 +132,7 @@ screens = [
 				#widget.Sep(foreground = "606060"),
 				#widget.Volume(),
 				widget.Sep(foreground = "606060"),
-				widget.Clock(format = '%Y-%m-%d %a %H:%M:%S'),
+				widget.Clock(format = '%Y-%m-%d %a %H.%M.%S'),
 			],
 			30,
 		),
@@ -134,6 +148,13 @@ mouse = [
 	Click([mod], "Button2", lazy.window.disable_floating())
 ]
 
+# Controls whether or not focus follows the mouse around as it moves across windows in a layout.
+follow_mouse_focus = False
+# When clicked, should the window be brought to the front or not. (This sets the X Stack Mode to Above.)
+bring_front_click = False
+# If true, the cursor follows the focus as directed by the keyboard, warping to the center of the focused window.
+cursor_warp = False
+
 @hook.subscribe.client_new
 def dialogs(window):
 	if (window.window.get_wm_type() == 'dialog'
@@ -142,25 +163,18 @@ def dialogs(window):
 
 @hook.subscribe.startup
 def runner():
-	#return
+	startup()
+	pass
+
+# Set default rules which defines floating windows
+#floating_layout = layout.Floating(float_rules=[{'wmclass': x} for x in ('file_progress', "notification", "toolbar", "splash", "dialog")])
+# If a window requests to be fullscreen, it is automatically fullscreened. Set this to false if you only want windows to be fullscreen if you ask them to be.
+auto_fullscreen = True
+
+def startup():
 	import subprocess
 	import os
 	import glob
-	# startup-script is simple a list of programs to run
-	#subprocess.Popen('startup-script')
-	# just a list of needed programs spawn
-	#subprocess.Popen(['kmix'])
-	#subprocess.Popen(['skype'])
-	#subprocess.Popen(['qtox'])
-	#subprocess.Popen(['pidgin'])
-	#subprocess.Popen(['goldendict'])
-	#subprocess.Popen(['thunderbird'])
-	#subprocess.Popen(['amarok'])
-	#subprocess.Popen(['python3', '1900_port.py'], cwd='/home/akawolf')
-
-	#progs = ['kmix', 'skype', 'qtox', 'pidgin', 'goldendict', 'thunderbird', 'amarok', 'konsole']
-	#progs = ['kmix', 'skype', 'qtox', 'pidgin', 'goldendict', 'thunderbird', 'deadbeef', 'konsole', 'telegram-desktop']
-	#progs = ['kmix', 'skype', 'qtox', 'pidgin', 'goldendict', 'thunderbird', 'amarok', 'konsole']
 	home = os.path.expanduser('~')
 	prog_files = glob.glob(home + '/.config/autostart/*.desktop')
 	progs = []
@@ -184,12 +198,6 @@ def runner():
 			subprocess.Popen(prog.split(' '))
 		except:
 			print('error: can\'t start ' + prog)
-	# terminal programs behave weird with regards to window titles
-	# we open them separately and in a defined order so that the
-	# client_new hook has time to group them by the window title
-	# as the window title for them is the same when they open
-	#subprocess.Popen(['urxvt', '-e', 'ncmpcpp-opener'])
-	#subprocess.Popen(['urxvt', '-e', 'weechat-curses'])
 
 	# set background
 	try:
@@ -206,12 +214,3 @@ def runner():
 		os.system("setxkbmap -model pc104 -layout us,ru -variant intl-unicode, -option '' -option grp:caps_toggle -option terminate:ctrl_alt_bksp")
 	except:
 		print('can\'t start setxkbmap')
-
-dgroups_key_binder = None
-dgroups_app_rules = []
-main = None
-follow_mouse_focus = False
-bring_front_click = False
-cursor_warp = False
-floating_layout = layout.Floating()
-auto_fullscreen = True
