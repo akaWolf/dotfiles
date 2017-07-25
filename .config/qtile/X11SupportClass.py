@@ -1,80 +1,62 @@
 # -*- coding: utf-8 -*-
 
-from ctypes import *
+from cffi import FFI
+ffi = FFI()
 
-#typedef struct _XkbStateRec {
-#	unsigned char	group;
-#	unsigned char   locked_group;
-#	unsigned short	base_group;
-#	unsigned short	latched_group;
-#	unsigned char	mods;
-#	unsigned char	base_mods;
-#	unsigned char	latched_mods;
-#	unsigned char	locked_mods;
-#	unsigned char	compat_state;
-#	unsigned char	grab_mods;
-#	unsigned char	compat_grab_mods;
-#	unsigned char	lookup_mods;
-#	unsigned char	compat_lookup_mods;
-#	unsigned short	ptr_buttons;
-#} XkbStateRec,*XkbStatePtr;
+ffi.cdef('''typedef struct _XkbStateRec {
+	unsigned char	group;
+	unsigned char   locked_group;
+	unsigned short	base_group;
+	unsigned short	latched_group;
+	unsigned char	mods;
+	unsigned char	base_mods;
+	unsigned char	latched_mods;
+	unsigned char	locked_mods;
+	unsigned char	compat_state;
+	unsigned char	grab_mods;
+	unsigned char	compat_grab_mods;
+	unsigned char	lookup_mods;
+	unsigned char	compat_lookup_mods;
+	unsigned short	ptr_buttons;
+} XkbStateRec,*XkbStatePtr;''')
 
-class XkbStateRec(Structure):
-	_fields_ = [('group', c_ubyte),
-		('locked_group', c_ubyte),
-		('base_group', c_ushort),
-		('latched_group', c_ushort),
-		('mods', c_ubyte),
-		('base_mods', c_ubyte),
-		('latched_mods', c_ubyte),
-		('locked_mods', c_ubyte),
-		('compat_state', c_ubyte),
-		('grab_mods', c_ubyte),
-		('compat_grab_mods', c_ubyte),
-		('lookup_mods', c_ubyte),
-		('compat_lookup_mods', c_ubyte),
-		('ptr_buttons', c_ushort),
-	]
+ffi.cdef('void *XOpenDisplay(char *display_name);')
+ffi.cdef('int XkbGetState (void *display, unsigned int device_spec, XkbStatePtr state_return);')
+ffi.cdef('bool XkbLockGroup (void *display, unsigned int device_spec, unsigned int group);')
+ffi.cdef('int XFlush(void *display);')
 
-#typedef struct _XkbRF_VarDefs {
-#	char *			model;
-#	char *			layout;
-#	char *			variant;
-#	char *			options;
-#	unsigned short		sz_extra;
-#	unsigned short		num_extra;
-#	char *			extra_names;
-#	char **			extra_values;
-#} XkbRF_VarDefsRec,*XkbRF_VarDefsPtr;
+ffi.cdef('''typedef struct _XkbRF_VarDefs {
+	char *			model;
+	char *			layout;
+	char *			variant;
+	char *			options;
+	unsigned short		sz_extra;
+	unsigned short		num_extra;
+	char *			extra_names;
+	char **			extra_values;
+} XkbRF_VarDefsRec,*XkbRF_VarDefsPtr;''')
 
-class XkbRF_VarDefsRec(Structure):
-	_fields_ = [('model', c_char_p),
-		('layout', c_char_p),
-		('variant', c_char_p),
-		('options', c_char_p),
-		('sz_extra', c_ushort),
-		('num_extra', c_ushort),
-		('extra_names', c_char_p),
-		('extra_values', POINTER(c_char_p)),
-	]
+ffi.cdef('bool XkbRF_GetNamesProp(void * dpy, char ** rules_file_rtrn, XkbRF_VarDefsPtr var_defs_rtrn);')
 
 class X11SupportClass:
 	def __init__(self):
-		self.X11 = cdll.LoadLibrary('libX11.so')
-		self.display = self.X11.XOpenDisplay(None)
-		self.xkbfile = cdll.LoadLibrary('libxkbfile.so')
-		self.state = XkbStateRec()
-		self.vdr = XkbRF_VarDefsRec()
+		#libX11
+		self.X11 = ffi.dlopen('libX11.so')
+		self.display = self.X11.XOpenDisplay(ffi.NULL)
+		self.state = ffi.new('XkbStateRec[1]')
+		#libxkbfile
+		self.xkbfile = ffi.dlopen('libxkbfile.so')
+		self.vdr = ffi.new('XkbRF_VarDefsRec[1]')
 
 	def GetGroup(self):
-		self.X11.XkbGetState(self.display, c_uint(0x0100), byref(self.state))
-		return self.state.group
+		self.X11.XkbGetState(self.display, 0x0100, self.state)
+		return self.state[0].group
 
 	def SetGroup(self, group):
-		self.X11.XkbLockGroup(self.display, c_uint(0x0100), c_uint(group))
+		self.X11.XkbLockGroup(self.display, 0x0100, group)
 		self.X11.XFlush(self.display)
 
 	def GetLayouts(self):
-		tmp = pointer(c_char())
-		self.xkbfile.XkbRF_GetNamesProp(self.display, byref(tmp), byref(self.vdr))
-		return self.vdr.layout.decode('ASCII').split(',')
+		tmp = ffi.new('char **')
+		self.xkbfile.XkbRF_GetNamesProp(self.display, tmp, self.vdr)
+		return ffi.string(self.vdr[0].layout).decode('ASCII').split(',')
