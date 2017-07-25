@@ -27,6 +27,7 @@ class XkbStateRec(Structure):
 		('mods', c_ubyte),
 		('base_mods', c_ubyte),
 		('latched_mods', c_ubyte),
+		('locked_mods', c_ubyte),
 		('compat_state', c_ubyte),
 		('grab_mods', c_ubyte),
 		('compat_grab_mods', c_ubyte),
