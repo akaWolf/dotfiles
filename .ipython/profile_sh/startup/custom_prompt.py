@@ -16,7 +16,7 @@ class TerminalInteractiveShellCustomPrompt(Prompts):
 		symb = '#' if os.getuid() == 0 else '$'
 		from IPython.terminal.prompts import Token
 		#prompt = [(Token, pwd),(Token.Prompt, ' {} '.format(symb))]
-		prompt = [ (Token.PromptNum, '{}:{}{} '.format(user, pwd, symb)) ]
+		prompt = [ (Token.PromptNum, '{}:{} {} '.format(user, pwd, symb)) ]
 		return prompt
 
 	def continuation_prompt_tokens(self, cli=None, width=None):
