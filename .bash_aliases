@@ -22,7 +22,7 @@ alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
-alias pastebinit='pastebinit -b https://paste.akawolf.org'
+alias pastebinit='pastebinit -b https://paste.akawolf.org -a akaWolf'
 
 # Compress the cd, ls -l series of commands.
 function cl() {
