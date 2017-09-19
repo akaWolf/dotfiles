@@ -72,7 +72,7 @@ keys = [
 
 	# Run command
 	#Key([mod], "r", lazy.spawncmd(prompt = '$')),
-	Key([mod], "r", lazy.spawn("dmenu_run -l 10 -fn 'ttf-droid' -nf '#26292B' -nb '#FFFFFF' -sb '#606060' -sf '#FFFFFF'")),
+	Key([mod], "r", lazy.spawn("dmenu_run -l 10 -fn '-16' -nf '#26292B' -nb '#FFFFFF' -sb '#606060' -sf '#FFFFFF'")),
 
 	# PrintScreen
 	Key([], "Print", lazy.spawn("spectacle")),
