@@ -107,7 +107,7 @@ layouts = [
 
 widget_defaults = dict(
 	font = "ttf-droid",
-	fontsize = 16,
+	fontsize = 20,
 	foreground = "26292B",
 	background = "FFFFFF",
 	padding = 3
@@ -157,7 +157,7 @@ cursor_warp = False
 
 @hook.subscribe.client_new
 def dialogs(window):
-	if (window.window.get_wm_type() == 'dialog'
+	if (window.window.get_wm_type() == "dialog"
 		or window.window.get_wm_transient_for()):
 		window.floating = True
 
@@ -175,13 +175,13 @@ def startup():
 	import subprocess
 	import os
 	import glob
-	home = os.path.expanduser('~')
-	prog_files = glob.glob(home + '/.config/autostart/*.desktop')
+	home = os.path.expanduser("~")
+	prog_files = glob.glob(home + "/.config/autostart/*.desktop")
 	progs = []
 
 	for prog in prog_files:
 		try:
-			executable = ''
+			executable = ""
 			with open(prog, 'r') as prog_f:
 				for line in prog_f:
 					if line.startswith('Exec='):
@@ -190,27 +190,32 @@ def startup():
 			if executable != '':
 				progs.append(executable)
 		except:
-			print('can\'t open ' + prog)
+			print("can't open " + prog)
 
 	for prog in progs:
 		try:
-			print('starting ' + prog.split(' ').__str__())
-			subprocess.Popen(prog.split(' '))
+			print("starting " + prog.split(" ").__str__())
+			subprocess.Popen(prog.split(" "))
 		except:
-			print('error: can\'t start ' + prog)
+			print("error: can't start " + prog)
 
 	# set background
 	try:
 		os.system("feh --bg-scale ~/theme_ntp_background.png")
 	except:
-		print('can\'t start feh')
+		print("can't start feh")
+
 	# set cursor
 	try:
 		os.system("xsetroot -cursor_name left_ptr")
 	except:
-		print('can\'t start xsetroot')
+		print("can't start xsetroot")
+
 	# set layouts
 	try:
 		os.system("setxkbmap -model pc104 -layout us,ru -variant intl-unicode, -option '' -option grp:caps_toggle -option terminate:ctrl_alt_bksp")
 	except:
-		print('can\'t start setxkbmap')
+		print("can't start setxkbmap")
+
+	# run udisks2 automounter (mount helper)
+	subprocess.Popen("udiskie --smart-tray --use-udisks2".split(" "))
