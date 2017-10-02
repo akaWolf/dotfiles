@@ -217,5 +217,14 @@ def startup():
 	except:
 		print("can't start setxkbmap")
 
+	# run authentication agent polkit-kde-agent
+	try:
+		subprocess.Popen("/usr/lib/polkit-kde/polkit-kde-authentication-agent-1")
+	except:
+		print("can't start polkit-kde-agent")
+
 	# run udisks2 automounter (mount helper)
-	subprocess.Popen("udiskie --smart-tray --use-udisks2".split(" "))
+	try:
+		subprocess.Popen("udiskie --smart-tray --use-udisks2".split(" "))
+	except:
+		print("can't start udiskie")
