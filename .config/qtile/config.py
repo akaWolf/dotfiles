@@ -189,7 +189,7 @@ def startup():
 			if executable != '':
 				progs.append(executable)
 		except:
-			print("can't open " + prog)
+			print("qtile: can't open " + prog)
 
 	for prog in progs:
 		runInBackground(prog)
@@ -211,12 +211,41 @@ def runInBackground(prog, descr = None):
 		progspl = prog.split(" ")
 		progname = progspl[0]
 	except:
-		print("error: can't parse " + prog)
+		print("qtile: error: can't parse " + prog)
+
+	print("qtile: starting " + prog)
+
+	killProcWithDelay(progname)
 
 	try:
-		print("qtile: starting " + prog)
 		if descr != None:
 			print("\t" + descr)
 		subprocess.Popen(progspl)
 	except:
-		print("error: can't start " + progname)
+		print("qtile: error: can't start " + progname)
+
+def killProcWithDelay(processName):
+	MAXDELAY = 3 # in seconds
+	import subprocess
+	import os
+	import signal
+	import sys
+	import time
+	proc = subprocess.Popen(["pgrep", processName], stdout = subprocess.PIPE)
+	for pid in proc.stdout:
+		# TODO: SIGKILL or SIGABORT after unsuccessfull SIGTERM
+		os.kill(int(pid), signal.SIGTERM)
+		timetosleep = 0.1
+		while timetosleep <= MAXDELAY:
+			time.sleep(timetosleep)
+			# Check if the process that we killed is alive.
+			try:
+				os.kill(int(pid), 0)
+			except OSError as ex:
+				break
+			timetosleep *= 2
+		if timetosleep > MAXDELAY:
+			print("qtile: wasn't able to kill the process " + processName)
+			break
+		else:
+			print("qtile: successfully killed " + processName)
