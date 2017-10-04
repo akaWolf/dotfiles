@@ -211,23 +211,11 @@ def startup():
 	for prog in progs:
 		runInBackground(prog)
 
-	# set background
-	try:
-		os.system("feh --bg-scale ~/theme_ntp_background.png")
-	except:
-		print("can't start feh")
+	runInBackground("feh --bg-scale " + home + "/theme_ntp_background.png", "set background")
 
-	# set cursor
-	try:
-		os.system("xsetroot -cursor_name left_ptr")
-	except:
-		print("can't start xsetroot")
+	runInBackground("xsetroot -cursor_name left_ptr", "set cursor")
 
-	# set layouts
-	try:
-		os.system("setxkbmap -model pc104 -layout us,ru -variant intl-unicode, -option '' -option grp:caps_toggle -option terminate:ctrl_alt_bksp")
-	except:
-		print("can't start setxkbmap")
+	runInBackground("setxkbmap -model pc104 -layout us,ru -variant intl-unicode, -option '' -option grp:caps_toggle -option terminate:ctrl_alt_bksp", "set layouts")
 
 	runInBackground("/usr/lib/polkit-kde/polkit-kde-authentication-agent-1", "authentication agent polkit-kde-agent")
 
