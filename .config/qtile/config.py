@@ -171,8 +171,24 @@ def runner():
 # If a window requests to be fullscreen, it is automatically fullscreened. Set this to false if you only want windows to be fullscreen if you ask them to be.
 auto_fullscreen = True
 
-def startup():
+def runInBackground(prog, descr = None):
 	import subprocess
+
+	try:
+		progspl = prog.split(" ")
+		progname = progspl[0]
+	except:
+		print("error: can't parse " + prog)
+
+	try:
+		print("qtile: starting " + prog)
+		if descr != None:
+			print("\t" + descr)
+		subprocess.Popen(progspl)
+	except:
+		print("error: can't start " + progname)
+
+def startup():
 	import os
 	import glob
 	home = os.path.expanduser("~")
@@ -193,11 +209,7 @@ def startup():
 			print("can't open " + prog)
 
 	for prog in progs:
-		try:
-			print("starting " + prog.split(" ").__str__())
-			subprocess.Popen(prog.split(" "))
-		except:
-			print("error: can't start " + prog)
+		runInBackground(prog)
 
 	# set background
 	try:
@@ -217,14 +229,6 @@ def startup():
 	except:
 		print("can't start setxkbmap")
 
-	# run authentication agent polkit-kde-agent
-	try:
-		subprocess.Popen("/usr/lib/polkit-kde/polkit-kde-authentication-agent-1")
-	except:
-		print("can't start polkit-kde-agent")
+	runInBackground("/usr/lib/polkit-kde/polkit-kde-authentication-agent-1", "authentication agent polkit-kde-agent")
 
-	# run udisks2 automounter (mount helper)
-	try:
-		subprocess.Popen("udiskie --smart-tray --use-udisks2".split(" "))
-	except:
-		print("can't start udiskie")
+	runInBackground("udiskie --smart-tray --use-udisks2", "udisks2 automounter (mount helper)")
