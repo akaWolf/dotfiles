@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# switch output from current enabled to current disabled
+# works only for the case of 2 outputs connected
+
+outputs=$(xrandr | grep connected | grep -v disconnected | awk '{ print $1 }')
+current=$(xrandr | grep connected | grep -v disconnected | egrep '[0-9]+x[0-9]+' | awk '{ print $1 }')
+
+enable=$(comm -23 <(echo $outputs | tr " " "\n") <(echo $current | tr " " "\n"))
+#comm -12 <(echo $current | tr " " "\n") <(echo $outputs | tr " " "\n")
+
+xrandr --output $current --off --output $enable --auto
+
+setxkbmap -model pc104 -layout us,ru -variant intl-unicode, -option '' -option grp:caps_toggle -option terminate:ctrl_alt_bksp
