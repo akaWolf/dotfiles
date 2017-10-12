@@ -6,6 +6,11 @@
 outputs=$(xrandr | grep connected | grep -v disconnected | awk '{ print $1 }')
 current=$(xrandr | grep connected | grep -v disconnected | egrep '[0-9]+x[0-9]+' | awk '{ print $1 }')
 
+if [ "$current" == "$outputs" ]; then
+	xrandr --output eDP1 --off
+	exit
+fi
+
 enable=$(comm -23 <(echo $outputs | tr " " "\n") <(echo $current | tr " " "\n"))
 #comm -12 <(echo $current | tr " " "\n") <(echo $outputs | tr " " "\n")
 
