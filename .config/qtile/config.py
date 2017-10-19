@@ -200,7 +200,7 @@ def startup():
 
 	runInBackground("setxkbmap -model pc104 -layout us,ru -variant intl-unicode, -option '' -option grp:caps_toggle -option terminate:ctrl_alt_bksp", "set layouts")
 
-	runInBackground("/usr/lib/polkit-kde/polkit-kde-authentication-agent-1", "authentication agent polkit-kde-agent")
+	runInBackground("/usr/lib/polkit-kde-authentication-agent-1", "authentication agent polkit-kde-agent")
 
 	runInBackground("udiskie --smart-tray --use-udisks2", "udisks2 automounter (mount helper)")
 
