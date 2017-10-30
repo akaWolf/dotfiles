@@ -50,7 +50,7 @@ function p()
 {
 	for last; do true; done
 	name=$(basename "$last")
-	pastebinit -t $name $@
+	pastebinit -t $name "$@"
 }
 
 # Compare md5 sum
