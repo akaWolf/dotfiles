@@ -24,6 +24,8 @@ alias egrep='egrep --color=auto'
 
 alias pastebinit='pastebinit -b https://paste.akawolf.org -a akaWolf'
 
+alias p0='picocom -b 115200 /dev/ttyUSB0'
+
 # Compress the cd, ls -l series of commands.
 function cl() {
 	if [ $# = 0 ]; then
