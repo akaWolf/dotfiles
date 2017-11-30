@@ -26,6 +26,11 @@ alias pastebinit='pastebinit -b https://paste.akawolf.org -a akaWolf'
 
 alias p0='picocom -b 115200 /dev/ttyUSB0'
 
+# HEX version of a diff (using xxd)
+function hdiff {
+	diff <(xxd $1) <(xxd $2)
+}
+
 # Compress the cd, ls -l series of commands.
 function cl() {
 	if [ $# = 0 ]; then
