@@ -1,4 +1,4 @@
-test -r ~/.private && source ~/.private
+test -r ~/.private && . ~/.private
 
 test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
 alias ls='ls --color=auto'
@@ -27,12 +27,14 @@ alias pastebinit='pastebinit -b https://paste.akawolf.org -a akaWolf'
 alias p0='picocom -b 115200 /dev/ttyUSB0'
 
 # HEX version of a diff (using xxd)
-function hdiff {
+hdiff()
+{
 	diff <(xxd $1) <(xxd $2)
 }
 
 # Compress the cd, ls -l series of commands.
-function cl() {
+cl()
+{
 	if [ $# = 0 ]; then
 		cd && ll
 	else
@@ -41,7 +43,7 @@ function cl() {
 }
 
 # Upload files
-function up()
+up()
 {
 	if [[ $1 == *.* ]]; then
 		ext=.$(echo $1 | cut -d . -f 2)
@@ -53,7 +55,7 @@ function up()
 }
 
 # Paste files
-function p()
+p()
 {
 	for last; do true; done
 	name=$(basename "$last")
@@ -61,7 +63,7 @@ function p()
 }
 
 # Compare md5 sum
-function md5comp
+md5comp()
 {
 	shopt -s nocasematch
 	if [[ $(md5sum "$1") = $2* ]]; then
@@ -72,40 +74,41 @@ function md5comp
 }
 
 # awk calculator (remember to quote arguments if they contain parentheses)
-function c
+c()
 {
 	awk "BEGIN{ pi=4.0*atan2(1.0,1.0); deg=pi/180.0; print $* }";
 }
 
 # hex to bin
-function h2b
+h2b()
 {
 	arg=$(echo "$1" | awk '{print toupper($0)}')
 	echo "obase=2; ibase=16; $arg" | bc
 }
 
 # bin to hex
-function b2h
+b2h()
 {
 	echo "obase=16; ibase=2; $1" | bc
 }
 
 # hex to dec
-function h2d
+h2d()
 {
 	arg=$(echo "$1" | awk '{print toupper($0)}')
 	echo "obase=10; ibase=16; $arg" | bc
 }
 
 # dec to hex
-function d2h
+d2h()
 {
 	arg=$(echo "$1" | awk '{print toupper($0)}')
 	echo "obase=16; ibase=10; $arg" | bc
 }
 
 # generate password: genpasswd [pass len]
-genpasswd() {
+genpasswd()
+{
 	local len="$1"
 	test "$len" == "" && len=8
 	tr -dc "A-Za-z0-9" < /dev/urandom | head -c "$len"; printf "\n"
