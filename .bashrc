@@ -27,3 +27,9 @@ export HISTSIZE=1000000			# big big history
 export HISTFILESIZE=$HISTSIZE
 #export HISTTIMEFORMAT="%h %d %H:%M:%S> "
 shopt -s histappend				# append to history, don't overwrite it
+
+# Set GPG TTY
+export GPG_TTY=$(tty)
+
+# Refresh gpg-agent tty in case user switches into an X session
+gpg-connect-agent updatestartuptty /bye >/dev/null
