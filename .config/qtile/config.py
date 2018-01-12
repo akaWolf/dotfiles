@@ -124,7 +124,7 @@ screens = [
 				widget.TaskList(border = "606060", borderwidth = 1),
 				widget.Notify(),
 				widget.Systray(),
-				widget.Battery(battery_name = "BAT0", charge_char = "↑", discharge_char = "↓", energy_full_file = "energy_full", energy_now_file = "energy_now", error_message = "NB", hide_threshold = 95, power_now_file = "power_now", status_file = "status", update_delay = 5, format = "{char} {percent:2.0%}"),
+				widget.Battery(battery_name = "BAT0", charge_char = "↑", discharge_char = "↓", energy_full_file = "energy_full", energy_now_file = "energy_now", error_message = "NB", power_now_file = "power_now", status_file = "status", update_delay = 5, format = "{char} {percent:2.0%}"),
 				widget.Sep(foreground = "606060"),
 				KeyboardLayoutCustom(update_interval = 0.1),
 				#widget.KeyboardLayout(configured_keyboards = ["us intl", "ru"], update_interval = 0.1),
