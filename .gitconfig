@@ -1,6 +1,7 @@
 [user]
 	email = akawolf0@gmail.com
 	name = Artjom Vejsel
+	signingkey = 159E508B1B40DF152320FC7D80D5EC717C13860B
 
 [push]
 	default = simple
