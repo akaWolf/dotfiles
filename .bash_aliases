@@ -26,6 +26,8 @@ alias pastebinit='pastebinit -b https://paste.akawolf.org -a akaWolf'
 
 alias p0='picocom -b 115200 /dev/ttyUSB0'
 
+alias gex='rsync -av --progress --exclude .git'
+
 # HEX version of a diff (using xxd)
 hdiff()
 {
