@@ -28,6 +28,8 @@ alias p0='picocom -b 115200 /dev/ttyUSB0'
 
 alias gex='rsync -av --progress --exclude .git'
 
+alias utc='date +%s'
+
 # HEX version of a diff (using xxd)
 hdiff()
 {
