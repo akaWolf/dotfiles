@@ -134,6 +134,9 @@
 	# undo from here http://megakemp.com/2016/08/25/git-undo/
 	undo = "!f() { git reset --hard $(git rev-parse --abbrev-ref HEAD)@{${1-1}}; }; f"
 
+	# gc from here: https://stackoverflow.com/a/14728706
+	gc-all = "!f() { git -c gc.reflogExpire=0 -c gc.reflogExpireUnreachable=0 -c gc.rerereresolved=0 -c gc.rerereunresolved=0 -c gc.pruneExpire=now gc; }; f"
+
 [color "diff"]
 	#commit
 	#frag
