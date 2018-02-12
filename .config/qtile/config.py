@@ -216,7 +216,10 @@ def runInBackground(prog, descr = None):
 
 	print("qtile: starting " + prog)
 
-	killProcWithDelay(progname)
+	#killProcWithDelay(progname)
+	if isProcRunning(progname):
+		print("qtile: already started " + prog)
+		return
 
 	try:
 		if descr != None:
@@ -225,13 +228,23 @@ def runInBackground(prog, descr = None):
 	except:
 		print("qtile: error: can't start " + progname)
 
+import psutil
+def isProcRunning(processName):
+	flag = False
+	for pid in psutil.pids():
+		proc = psutil.Process(pid)
+		if proc.name() == processName:
+			flag = True
+			break
+	return flag
+
+import subprocess
+import os
+import signal
+import sys
+import time
 def killProcWithDelay(processName):
 	MAXDELAY = 3 # in seconds
-	import subprocess
-	import os
-	import signal
-	import sys
-	import time
 	proc = subprocess.Popen(["pgrep", processName], stdout = subprocess.PIPE)
 	for pid in proc.stdout:
 		# TODO: SIGKILL or SIGABORT after unsuccessfull SIGTERM
