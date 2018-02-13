@@ -21,6 +21,9 @@ test -s ~/.bash_aliases && . ~/.bash_aliases || true
 # add ~/bin to PATH
 test -d ~/bin && PATH=~/bin:$PATH
 
+# set editor
+export EDITOR=qtcreator-client
+
 # hist settings
 export HISTCONTROL=ignoreboth	# ignorespace + ignoredups
 export HISTSIZE=1000000			# big big history
