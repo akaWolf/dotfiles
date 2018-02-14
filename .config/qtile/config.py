@@ -254,51 +254,7 @@ def runInBackground(prog, descr = None):
 	if descr != None:
 		logger.info("\t" + descr)
 
-	#killProcWithDelay(progname)
-	#if isProcRunning(progname):
-	#	logger.warning("qtile: already started " + prog)
-	#	return
-
 	try:
 		subprocess.Popen(progspl)
 	except:
 		logger.warning("qtile: error: can't start " + progname)
-
-import psutil
-def isProcRunning(processName):
-	flag = False
-	for pid in psutil.pids():
-		try:
-			proc = psutil.Process(pid)
-		except:
-			continue
-		if proc.name() == processName:
-			flag = True
-			break
-	return flag
-
-import subprocess
-import os
-import signal
-import sys
-import time
-def killProcWithDelay(processName):
-	MAXDELAY = 3 # in seconds
-	proc = subprocess.Popen(["pgrep", processName], stdout = subprocess.PIPE)
-	for pid in proc.stdout:
-		# TODO: SIGKILL or SIGABORT after unsuccessfull SIGTERM
-		os.kill(int(pid), signal.SIGTERM)
-		timetosleep = 0.1
-		while timetosleep <= MAXDELAY:
-			time.sleep(timetosleep)
-			# Check if the process that we killed is alive.
-			try:
-				os.kill(int(pid), 0)
-			except OSError as ex:
-				break
-			timetosleep *= 2
-		if timetosleep > MAXDELAY:
-			logger.warning("qtile: wasn't able to kill the process " + processName)
-			break
-		else:
-			logger.info("qtile: successfully killed " + processName)
