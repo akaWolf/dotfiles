@@ -232,7 +232,10 @@ import psutil
 def isProcRunning(processName):
 	flag = False
 	for pid in psutil.pids():
-		proc = psutil.Process(pid)
+		try:
+			proc = psutil.Process(pid)
+		except:
+			continue
 		if proc.name() == processName:
 			flag = True
 			break
