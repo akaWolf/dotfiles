@@ -4,11 +4,18 @@
 
 # get info from xrandr
 connectedOutputs=$(xrandr | grep " connected" | sed -e "s/\([A-Z0-9]\+\) connected.*/\1/")
+disconnectedOutputs=$(xrandr | grep " disconnected" | sed -e "s/\([A-Z0-9]\+\) disconnected.*/\1/")
 activeOutput=$(xrandr | grep -E " connected (primary )?[1-9]+" | sed -e "s/\([A-Z0-9]\+\) connected.*/\1/")
 
+disable=""
+for display in $disconnectedOutputs
+do
+        disable=$disable"--output $display --off "
+done
+
 # initialize variables
-execute="xrandr "
-default="xrandr "
+execute="xrandr $disable "
+default="xrandr $disable "
 i=1
 switch=0
 

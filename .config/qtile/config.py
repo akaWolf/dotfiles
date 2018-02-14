@@ -163,23 +163,61 @@ def dialogs(window):
 		or window.window.get_wm_transient_for()):
 		window.floating = True
 
+@hook.subscribe.screen_change
+def screen_change_hook(qtile, ev):
+	# lazy.restart() doesnt work here
+	qtile.cmd_restart()
+
 @hook.subscribe.startup
-def runner():
+def startup_hook():
 	startup()
+
+@hook.subscribe.startup_once
+def startup_once_hook():
+	startup_once()
 
 def main(qtile):
 	# set logging level
 	qtile.cmd_warning()
+
+	screens_monitor_start()
 
 # Set default rules which defines floating windows
 #floating_layout = layout.Floating(float_rules=[{'wmclass': x} for x in ('file_progress', "notification", "toolbar", "splash", "dialog")])
 # If a window requests to be fullscreen, it is automatically fullscreened. Set this to false if you only want windows to be fullscreen if you ask them to be.
 auto_fullscreen = True
 
+def setup_monitors(action=None, device=None):
+	if action == "change":
+		# setup monitors with xrandr
+		import subprocess
+		subprocess.call(home + "/bin/swt")
+		#lazy.restart()
+
+def screens_monitor_start():
+	import pyudev
+
+	context = pyudev.Context()
+	monitor = pyudev.Monitor.from_netlink(context)
+	monitor.filter_by('drm')
+	monitor.enable_receiving()
+
+	# observe if the monitors change and reset monitors config
+	observer = pyudev.MonitorObserver(monitor, setup_monitors)
+	observer.start()
+
+import os
+home = os.path.expanduser("~")
+
 def startup():
-	import os
+	runInBackground("feh --bg-scale " + home + "/theme_ntp_background.png", "set background")
+
+	runInBackground("xsetroot -cursor_name left_ptr", "set cursor")
+
+	runInBackground("setxkbmap -model pc104 -layout us,ru -variant intl-unicode, -option '' -option grp:caps_toggle -option terminate:ctrl_alt_bksp", "set layouts")
+
+def startup_once():
 	import glob
-	home = os.path.expanduser("~")
 	prog_files = glob.glob(home + "/.config/autostart/*.desktop")
 	progs = []
 
@@ -199,12 +237,6 @@ def startup():
 	for prog in progs:
 		runInBackground(prog)
 
-	runInBackground("feh --bg-scale " + home + "/theme_ntp_background.png", "set background")
-
-	runInBackground("xsetroot -cursor_name left_ptr", "set cursor")
-
-	runInBackground("setxkbmap -model pc104 -layout us,ru -variant intl-unicode, -option '' -option grp:caps_toggle -option terminate:ctrl_alt_bksp", "set layouts")
-
 	runInBackground("/usr/lib/polkit-kde-authentication-agent-1", "authentication agent polkit-kde-agent")
 
 	runInBackground("udiskie --smart-tray --use-udisks2", "udisks2 automounter (mount helper)")
@@ -223,9 +255,9 @@ def runInBackground(prog, descr = None):
 		logger.info("\t" + descr)
 
 	#killProcWithDelay(progname)
-	if isProcRunning(progname):
-		logger.warning("qtile: already started " + prog)
-		return
+	#if isProcRunning(progname):
+	#	logger.warning("qtile: already started " + prog)
+	#	return
 
 	try:
 		subprocess.Popen(progspl)
