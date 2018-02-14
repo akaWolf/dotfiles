@@ -1,6 +1,7 @@
 from libqtile.config import Key, Screen, Group, Drag, Click
 from libqtile.command import lazy
 from libqtile import layout, bar, widget, hook
+from libqtile.log_utils import logger
 
 from KeyboardLayoutCustom import KeyboardLayoutCustom
 
@@ -165,7 +166,10 @@ def dialogs(window):
 @hook.subscribe.startup
 def runner():
 	startup()
-	pass
+
+def main(qtile):
+	# set logging level
+	qtile.cmd_warning()
 
 # Set default rules which defines floating windows
 #floating_layout = layout.Floating(float_rules=[{'wmclass': x} for x in ('file_progress', "notification", "toolbar", "splash", "dialog")])
@@ -190,7 +194,7 @@ def startup():
 			if executable != '':
 				progs.append(executable)
 		except:
-			print("qtile: can't open " + prog)
+			logger.warning("qtile: can't open " + prog)
 
 	for prog in progs:
 		runInBackground(prog)
@@ -212,21 +216,21 @@ def runInBackground(prog, descr = None):
 		progspl = prog.split(" ")
 		progname = progspl[0]
 	except:
-		print("qtile: error: can't parse " + prog)
+		logger.warning("qtile: error: can't parse " + prog)
 
-	print("qtile: starting " + prog)
+	logger.info("qtile: starting " + prog)
+	if descr != None:
+		logger.info("\t" + descr)
 
 	#killProcWithDelay(progname)
 	if isProcRunning(progname):
-		print("qtile: already started " + prog)
+		logger.warning("qtile: already started " + prog)
 		return
 
 	try:
-		if descr != None:
-			print("\t" + descr)
 		subprocess.Popen(progspl)
 	except:
-		print("qtile: error: can't start " + progname)
+		logger.warning("qtile: error: can't start " + progname)
 
 import psutil
 def isProcRunning(processName):
@@ -262,7 +266,7 @@ def killProcWithDelay(processName):
 				break
 			timetosleep *= 2
 		if timetosleep > MAXDELAY:
-			print("qtile: wasn't able to kill the process " + processName)
+			logger.warning("qtile: wasn't able to kill the process " + processName)
 			break
 		else:
-			print("qtile: successfully killed " + processName)
+			logger.info("qtile: successfully killed " + processName)
