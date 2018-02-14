@@ -187,6 +187,9 @@ def main(qtile):
 # If a window requests to be fullscreen, it is automatically fullscreened. Set this to false if you only want windows to be fullscreen if you ask them to be.
 auto_fullscreen = True
 
+import os
+home = os.path.expanduser("~")
+
 def setup_monitors(action=None, device=None):
 	if action == "change":
 		# setup monitors with xrandr
@@ -205,9 +208,6 @@ def screens_monitor_start():
 	# observe if the monitors change and reset monitors config
 	observer = pyudev.MonitorObserver(monitor, setup_monitors)
 	observer.start()
-
-import os
-home = os.path.expanduser("~")
 
 def startup():
 	runInBackground("feh --bg-scale " + home + "/theme_ntp_background.png", "set background")
