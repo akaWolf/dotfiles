@@ -22,6 +22,8 @@ alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
+alias n='nnn'
+
 alias pastebinit='pastebinit -b https://paste.akawolf.org -a akaWolf'
 
 alias p0='picocom -b 115200 /dev/ttyUSB0'
