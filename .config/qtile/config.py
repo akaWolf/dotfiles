@@ -56,33 +56,73 @@ keys = [
 	),
 
 	# Toggle between different layouts as defined below
-	Key([mod], "Tab", lazy.next_layout()),
+	Key(
+		[mod], "Tab",
+		lazy.next_layout()
+	),
 
 	# Add/Delete stack
-	Key([mod], "t", lazy.layout.add()),
-	Key([mod], "y", lazy.layout.delete()),
+	Key(
+		[mod], "t",
+		lazy.layout.add()
+	),
+	Key(
+		[mod], "y",
+		lazy.layout.delete()
+	),
 
 	# Close current window
-	Key([mod], "w", lazy.window.kill()),
+	Key(
+		[mod], "w",
+		lazy.window.kill()
+	),
 
 	# Restart qtile
-	Key([mod, "control"], "r", lazy.restart()),
+	Key(
+		[mod, "control"], "r",
+		lazy.restart()
+	),
 
 	# Close qtile
-	Key([mod, "control"], "q", lazy.shutdown()),
+	Key(
+		[mod, "control"], "q",
+		lazy.shutdown()
+	),
 
 	# Run command
 	#Key([mod], "r", lazy.spawncmd(prompt = '$')),
-	Key([mod], "r", lazy.spawn("dmenu_run -l 10 -fn '-16' -nf '#26292B' -nb '#FFFFFF' -sb '#606060' -sf '#FFFFFF'")),
+	Key(
+		[mod], "r",
+		lazy.spawn("dmenu_run -l 10 -fn '-16' -nf '#26292B' -nb '#FFFFFF' -sb '#606060' -sf '#FFFFFF'")
+	),
 
 	# PrintScreen
-	Key([], "Print", lazy.spawn("spectacle")),
+	Key(
+		[], "Print",
+		lazy.spawn("spectacle")
+	),
 
 	# Start VT
-	Key([mod], "Return", lazy.spawn("konsole")),
+	Key(
+		[mod], "Return",
+		lazy.spawn("konsole")
+	),
 
 	# Lock screen
-	Key([mod], "l", lazy.spawn("i3lock -c000000")),
+	Key(
+		[mod], "l",
+		lazy.spawn("i3lock -c000000")
+	),
+
+	# Backlight (brightness) control
+	Key(
+		[mod], "Left",
+		lazy.spawn("xbacklight -dec 10")
+	),
+	Key(
+		[mod], "Right",
+		lazy.spawn("xbacklight -inc 10")
+	),
 ]
 
 groups = [Group(i) for i in "asdfgzxcvb"]
