@@ -90,7 +90,7 @@ keys = [
 	),
 
 	# Run command
-	#Key([mod], "r", lazy.spawncmd(prompt = '$')),
+	#Key([mod], "r", lazy.spawncmd(prompt = "$")),
 	Key(
 		[mod], "r",
 		lazy.spawn("dmenu_run -l 10 -fn '-16' -nf '#26292B' -nb '#FFFFFF' -sb '#606060' -sf '#FFFFFF'")
@@ -177,7 +177,7 @@ screens = [
 				#widget.Sep(foreground = "606060"),
 				#widget.Volume(),
 				widget.Sep(foreground = "606060"),
-				widget.Clock(format = '%Y-%m-%d %a %H.%M.%S'),
+				widget.Clock(format = "%Y-%m-%d %a %H.%M.%S"),
 			],
 			30,
 		),
@@ -226,7 +226,7 @@ def main(qtile):
 	screens_monitor_start()
 
 # Set default rules which defines floating windows
-#floating_layout = layout.Floating(float_rules=[{'wmclass': x} for x in ('file_progress', "notification", "toolbar", "splash", "dialog")])
+#floating_layout = layout.Floating(float_rules=[{"wmclass": x} for x in ("file_progress", "notification", "toolbar", "splash", "dialog")])
 # If a window requests to be fullscreen, it is automatically fullscreened. Set this to false if you only want windows to be fullscreen if you ask them to be.
 auto_fullscreen = True
 
@@ -245,7 +245,7 @@ def screens_monitor_start():
 
 	context = pyudev.Context()
 	monitor = pyudev.Monitor.from_netlink(context)
-	monitor.filter_by('drm')
+	monitor.filter_by("drm")
 	monitor.enable_receiving()
 
 	# observe if the monitors change and reset monitors config
@@ -267,12 +267,12 @@ def startup_once():
 	for prog in prog_files:
 		try:
 			executable = ""
-			with open(prog, 'r') as prog_f:
+			with open(prog, "r") as prog_f:
 				for line in prog_f:
-					if line.startswith('Exec='):
+					if line.startswith("Exec="):
 						executable = line[5:].strip()
 						break
-			if executable != '':
+			if executable != "":
 				progs.append(executable)
 		except:
 			logger.warning("qtile: can't open " + prog)
