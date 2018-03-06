@@ -148,6 +148,7 @@ layouts = [
 
 widget_defaults = dict(
 	font = "ttf-droid",
+	fontshadow = None,
 	fontsize = 20,
 	foreground = "26292B",
 	background = "FFFFFF",
@@ -166,6 +167,8 @@ screens = [
 				widget.Notify(),
 				widget.Systray(),
 				widget.Battery(battery_name = "BAT0", charge_char = "↑", discharge_char = "↓", energy_full_file = "energy_full", energy_now_file = "energy_now", error_message = "NB", power_now_file = "power_now", status_file = "status", update_delay = 5, format = "{char} {percent:2.0%}"),
+				widget.Sep(foreground = "606060"),
+				widget.Backlight(backlight_name = "intel_backlight", brightness_file = "brightness", max_brightness_file = "max_brightness", markup = False, padding = None, step = 10, update_interval = 0.2, format = "{percent:2.0%}"),
 				widget.Sep(foreground = "606060"),
 				KeyboardLayoutCustom(update_interval = 0.1),
 				#widget.KeyboardLayout(configured_keyboards = ["us intl", "ru"], update_interval = 0.1),
