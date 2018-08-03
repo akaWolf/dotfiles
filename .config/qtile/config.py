@@ -116,11 +116,11 @@ keys = [
 
 	# Backlight (brightness) control
 	Key(
-		[mod], "Left",
+		[], "XF86MonBrightnessDown",
 		lazy.spawn("xbacklight -dec 10")
 	),
 	Key(
-		[mod], "Right",
+		[], "XF86MonBrightnessUp",
 		lazy.spawn("xbacklight -inc 10")
 	),
 ]
