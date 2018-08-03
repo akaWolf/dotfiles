@@ -123,6 +123,12 @@ keys = [
 		[], "XF86MonBrightnessUp",
 		lazy.spawn("xbacklight -inc 10")
 	),
+
+	# Suspend
+	Key(
+		[mod], "m",
+		lazy.spawn("systemctl suspend")
+	),
 ]
 
 groups = [Group(i) for i in "asdfgzxcvb"]
