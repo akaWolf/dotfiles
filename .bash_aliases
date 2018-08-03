@@ -22,6 +22,8 @@ alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
+alias qtc='qtcreator-client'
+
 alias n='nnn'
 
 alias pastebinit='pastebinit -b https://paste.akawolf.org -a akaWolf'
