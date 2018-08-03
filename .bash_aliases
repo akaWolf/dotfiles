@@ -116,6 +116,13 @@ d2h()
 	echo "obase=16; ibase=10; $arg" | bc
 }
 
+# dec to bin
+d2b()
+{
+        arg=$(echo "$1" | awk '{print toupper($0)}')
+        echo "obase=2; ibase=10; $arg" | bc
+}
+
 # generate password: genpasswd [pass len]
 genpasswd()
 {
