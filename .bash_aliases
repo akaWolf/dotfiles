@@ -34,6 +34,8 @@ alias gex='rsync -av --progress --exclude .git'
 
 alias utc='date +%s'
 
+alias hd='od --format=x1 --address-radix=n'
+
 # HEX version of a diff (using xxd)
 hdiff()
 {
