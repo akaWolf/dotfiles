@@ -1,0 +1,22 @@
+# .shrc: common shell settings
+
+# set command-not-found handler
+source /usr/share/doc/pkgfile/command-not-found.bash
+
+# load usefull aliases
+test -s ~/.bash_aliases && . ~/.bash_aliases || true
+
+# add ~/bin to PATH
+test -d ~/bin && PATH=~/bin:$PATH
+
+# set editor
+export EDITOR=qtcreator-client
+
+# Set GPG TTY
+export GPG_TTY=$(tty)
+
+# Refresh gpg-agent tty in case user switches into an X session
+gpg-connect-agent updatestartuptty /bye >/dev/null
+
+# nnn: edit all files in EDITOR
+export NNN_USE_EDITOR=1
