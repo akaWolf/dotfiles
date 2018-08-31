@@ -205,6 +205,8 @@ follow_mouse_focus = False
 bring_front_click = False
 # If true, the cursor follows the focus as directed by the keyboard, warping to the center of the focused window.
 cursor_warp = False
+# Prevent focus stealing
+focus_on_window_activation = "never"
 
 @hook.subscribe.client_new
 def dialogs(window):
@@ -232,7 +234,25 @@ def main(qtile):
 	screens_monitor_start()
 
 # Set default rules which defines floating windows
-#floating_layout = layout.Floating(float_rules=[{"wmclass": x} for x in ("file_progress", "notification", "toolbar", "splash", "dialog")])
+floating_layout = layout.Floating(
+	float_rules=[
+		{"wmclass": x} for x in (
+			"confirm",
+			"dialog",
+			"download",
+			"error",
+			"file_progress",
+			"notification",
+			"splash",
+			"toolbar"
+		)
+	] + [
+		{"wname": x} for x in (
+#			"",
+#			""
+		)
+	]
+)
 # If a window requests to be fullscreen, it is automatically fullscreened. Set this to false if you only want windows to be fullscreen if you ask them to be.
 auto_fullscreen = True
 
