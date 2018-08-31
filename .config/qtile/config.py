@@ -111,7 +111,7 @@ keys = [
 	# Lock screen
 	Key(
 		[mod], "l",
-		lazy.spawn("i3lock -c000000")
+		lazy.spawn("i3lock --nofork --color=000000")
 	),
 
 	# Backlight (brightness) control
@@ -309,6 +309,8 @@ def startup_once():
 	runInBackground("/usr/lib/polkit-kde-authentication-agent-1", "authentication agent polkit-kde-agent")
 
 	runInBackground("udiskie --smart-tray --use-udisks2", "udisks2 automounter (mount helper)")
+
+	runInBackground("xss-lock -- i3lock --nofork --color=000000", "xss-lock subscribes to the systemd-events suspend, hibernate")
 
 def runInBackground(prog, descr = None):
 	import subprocess
