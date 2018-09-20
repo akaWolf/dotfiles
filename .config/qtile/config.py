@@ -264,7 +264,8 @@ def setup_monitors(action=None, device=None):
 		# setup monitors with xrandr
 		import subprocess
 		subprocess.call(home + "/bin/swt")
-		#lazy.restart()
+		# no need to lazy.restart() here, we just reconfigure X
+		startup()
 
 def screens_monitor_start():
 	import pyudev
