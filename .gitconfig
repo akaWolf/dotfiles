@@ -137,6 +137,12 @@
 	# gc from here: https://stackoverflow.com/a/14728706
 	gc-all = "!f() { git -c gc.reflogExpire=0 -c gc.reflogExpireUnreachable=0 -c gc.rerereresolved=0 -c gc.rerereunresolved=0 -c gc.pruneExpire=now gc; }; f"
 
+[sendemail]
+	smtpEncryption = tls
+	smtpServer = smtp.gmail.com
+	smtpUser = akawolf0@gmail.com
+	smtpServerPort = 587
+
 [color "diff"]
 	#commit
 	#frag
