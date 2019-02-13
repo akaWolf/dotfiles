@@ -1,0 +1,6 @@
+# set qt5ct platform plagin for non-KDE and non-Gnome session
+[ "$XDG_CURRENT_DESKTOP" = "KDE" ] || [ "$XDG_CURRENT_DESKTOP" = "GNOME" ] || export QT_QPA_PLATFORMTHEME="qt5ct"
+
+# set GTK+ theme
+#export GTK_THEME=Breeze:dark
+# moved to ~/.config/gtk-3.0/settings.ini
