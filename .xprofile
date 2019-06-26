@@ -1,5 +1,16 @@
-# set qt5ct platform plagin for non-KDE and non-Gnome session
-[ "$XDG_CURRENT_DESKTOP" = "KDE" ] || [ "$XDG_CURRENT_DESKTOP" = "GNOME" ] || export QT_QPA_PLATFORMTHEME="qt5ct"
+# for non-KDE and non-Gnome session
+[ "$XDG_CURRENT_DESKTOP" = "KDE" ] ||
+[ "$XDG_CURRENT_DESKTOP" = "GNOME" ] ||
+{
+	# set qt5ct platform plugin
+	export QT_QPA_PLATFORMTHEME="qt5ct"
+
+	# simulate KDE5 session for using
+	# KDE services like kwallet by the
+	# applications like Chromium
+	export XDG_CURRENT_DESKTOP=KDE
+	export KDE_SESSION_VERSION=5
+}
 
 # set GTK+ theme
 #export GTK_THEME=Breeze:dark
