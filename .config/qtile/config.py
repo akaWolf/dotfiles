@@ -6,6 +6,8 @@ from libqtile.log_utils import logger
 from KeyboardLayoutCustom import KeyboardLayoutCustom
 
 mod = "mod4"
+screen_locker = "i3lock --nofork --color=000000"
+run_command = "dmenu_run -l 10 -fn '-16' -nf '#26292B' -nb '#FFFFFF' -sb '#606060' -sf '#FFFFFF'"
 
 keys = [
 	# Switch between windows in current stack pane
@@ -93,7 +95,7 @@ keys = [
 	#Key([mod], "r", lazy.spawncmd(prompt = "$")),
 	Key(
 		[mod], "r",
-		lazy.spawn("dmenu_run -l 10 -fn '-16' -nf '#26292B' -nb '#FFFFFF' -sb '#606060' -sf '#FFFFFF'")
+		lazy.spawn(run_command)
 	),
 
 	# PrintScreen
@@ -111,7 +113,7 @@ keys = [
 	# Lock screen
 	Key(
 		[mod], "l",
-		lazy.spawn("i3lock --nofork --color=000000")
+		lazy.spawn(screen_locker)
 	),
 
 	# Backlight (brightness) control
@@ -311,7 +313,7 @@ def startup_once():
 
 	runInBackground("udiskie --smart-tray --use-udisks2", "udisks2 automounter (mount helper)")
 
-	runInBackground("xss-lock -- i3lock --nofork --color=000000", "xss-lock subscribes to the systemd-events suspend, hibernate")
+	runInBackground("xss-lock -- " + screen_locker, "xss-lock subscribes to the systemd-events suspend, hibernate")
 
 def runInBackground(prog, descr = None):
 	import subprocess
