@@ -5,7 +5,7 @@ test -s ~/.fish_aliases && source ~/.fish_aliases || true
 test -d ~/bin && set PATH ~/bin $PATH
 
 # set editor
-set -xg EDITOR qtcreator-client
+set -xg EDITOR emacs-client
 
 # Set GPG TTY
 set -xg GPG_TTY $tty
