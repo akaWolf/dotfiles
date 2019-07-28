@@ -65,7 +65,7 @@ end
 function p --wraps=pastebinit
 	set -l last_arg $argv[(count $argv)]
 	set -l name (basename "$last_arg")
-	pastebinit -t $name "$argv"
+	pastebinit -t $name $argv
 end
 
 # Compare md5 sum
