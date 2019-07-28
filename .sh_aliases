@@ -22,7 +22,7 @@ alias grep='grep --color=auto'
 alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
-alias qtc='qtcreator-client'
+alias q='qtcreator-client'
 
 alias n='nnn'
 
