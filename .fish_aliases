@@ -1,4 +1,4 @@
-test -r ~/.private && . ~/.private
+test -r ~/.private.fish && source ~/.private.fish
 
 test -r ~/.dircolors && eval (dircolors -b ~/.dircolors) || eval (dircolors -c)
 alias ls='ls --color=auto'

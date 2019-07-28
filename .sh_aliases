@@ -1,4 +1,4 @@
-test -r ~/.private && . ~/.private
+test -r ~/.private.sh && source ~/.private.sh
 
 test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
 alias ls='ls --color=auto'
