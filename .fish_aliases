@@ -53,9 +53,9 @@ end
 # Upload files
 function up
 	if string match -q "*.*" "$argv[1]"
-		set -l ext .(echo "$argv[1]" | cut -d . -f 2)
+		set ext .(echo "$argv[1]" | cut -d . -f 2)
 	else
-		set -l ext ""
+		set ext ""
 	end
 	set -l name (basename "$argv[1]")
 	curl --silent -b "uid=1; identifier=$BINIDENT" -F "file=@$argv[1]" -F "filename=$name" -F "api=1" https://bin.akawolf.org/u | awk "{print \"https://bin.akawolf.org/f/\"\$2\"$ext\"}"
