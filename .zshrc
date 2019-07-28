@@ -57,4 +57,4 @@ ttyctl -f
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # switch to fish shell
-exec fish
+#exec fish
