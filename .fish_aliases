@@ -23,6 +23,7 @@ alias fgrep='fgrep --color=auto'
 alias egrep='egrep --color=auto'
 
 alias q='qtcreator-client'
+alias e='emacs-client'
 
 alias n='nnn'
 
