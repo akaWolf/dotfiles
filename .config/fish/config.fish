@@ -7,10 +7,10 @@ test -d ~/bin && set PATH ~/bin $PATH
 # set editor
 set -xg EDITOR emacs-client
 
-# Set GPG TTY
+# set GPG TTY
 set -xg GPG_TTY $tty
 
-# Refresh gpg-agent tty in case user switches into an X session
+# refresh gpg-agent tty in case user switches into an X session
 gpg-connect-agent updatestartuptty /bye > /dev/null
 
 # nnn: edit all files in EDITOR
