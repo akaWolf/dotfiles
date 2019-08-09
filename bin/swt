@@ -22,7 +22,7 @@ switch=0
 for display in $connectedOutputs
 do
 	# build default configuration
-	if [ $i -eq 1 ]
+	if [ $i -eq ${#connectedOutputs[@]} ]
 	then
 		default=$default"--output $display --auto "
 	else
@@ -57,4 +57,4 @@ else
 	echo "Command: $execute"
 	`$execute`
 fi
-echo -e "\n$(xrandr)"
+#echo -e "\n$(xrandr)"
