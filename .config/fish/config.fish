@@ -7,6 +7,9 @@ test -d ~/bin && set PATH ~/bin $PATH
 # set editor
 set -xg EDITOR emacs-client
 
+# set pager
+set -xg PAGER most
+
 # set GPG TTY
 set -xg GPG_TTY $tty
 
