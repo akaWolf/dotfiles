@@ -126,6 +126,12 @@ keys = [
 		lazy.spawn("xbacklight -inc 10")
 	),
 
+	# Switch between displays
+	Key(
+		[mod], "n",
+		lazy.spawn("swt")
+	),
+
 	# Suspend
 	Key(
 		[mod], "m",
@@ -231,9 +237,10 @@ def startup_once_hook():
 
 def main(qtile):
 	# set logging level
-	qtile.cmd_warning()
+	qtile.cmd_debug()
 
-	screens_monitor_start()
+	# disabled due very unexpected results at ThinkPad Gen 6 
+	#screens_monitor_start()
 
 # Set default rules which defines floating windows
 floating_layout = layout.Floating(
