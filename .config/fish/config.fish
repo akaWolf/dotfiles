@@ -31,8 +31,8 @@ if [ -n "$INSIDE_EMACS" ]
   function fish_title
     true
   end
-  # usefull for TRAMP, disabled for local machine
+  # usefull for TRAMP
   # see https://github.com/emacs-mirror/emacs/blob/220f16cab6c40a1b0df1a5d2101c6602abbc6aae/lisp/term.el#L241
-  #printf "\eAnSiTu %s\n" "$USER"
-  #printf '\033AnSiTh %s\n' "$HOSTNAME"
+  printf "\eAnSiTu %s\n" "$USER"
+  printf '\033AnSiTh %s\n' "$HOSTNAME"
 end
