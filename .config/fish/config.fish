@@ -13,6 +13,9 @@ set -xg PAGER most
 # set GPG TTY
 set -xg GPG_TTY $tty
 
+# set HOSTNAME env var for backward compatibility with bash
+set -xg HOSTNAME (hostname)
+
 # refresh gpg-agent tty in case user switches into an X session
 gpg-connect-agent updatestartuptty /bye > /dev/null
 
