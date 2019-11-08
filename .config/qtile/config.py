@@ -134,8 +134,14 @@ keys = [
 
 	# Suspend
 	Key(
-		[mod], "m",
+		[mod, "control"], "m",
 		lazy.spawn("systemctl suspend")
+	),
+
+	# Print music
+	Key(
+		[mod], "m",
+		lazy.spawn("music.py")
 	),
 ]
 
@@ -239,7 +245,7 @@ def main(qtile):
 	# set logging level
 	qtile.cmd_debug()
 
-	# disabled due very unexpected results at ThinkPad Gen 6 
+	# disabled due very unexpected results at ThinkPad Gen 6
 	#screens_monitor_start()
 
 # Set default rules which defines floating windows
