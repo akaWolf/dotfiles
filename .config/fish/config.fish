@@ -31,7 +31,7 @@ if set -q INSIDE_EMACS
     function prompt_vterm -e fish_prompt
       printf '\e]51;A%s\e\\' "$PWD"
     end
-  case '*'
+  case '*,term:*'
     # see https://emacs.stackexchange.com/a/31446
     function prompt_AnSiT -e fish_prompt
       printf "\eAnSiTc %s\n" "$PWD"
