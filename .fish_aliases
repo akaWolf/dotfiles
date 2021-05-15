@@ -37,6 +37,12 @@ alias utc='date +%s'
 
 alias hd='od --format=x1 --address-radix=n'
 
+alias less='less --RAW-CONTROL-CHARS'
+
+alias less='bat --style=plain --paging=always --pager=less'
+
+alias cat='bat --style=plain --paging=never'
+
 # HEX version of a diff (using xxd)
 function hdiff --wraps=diff
 	diff (xxd $argv[1] | psub) (xxd $argv[2] | psub)
