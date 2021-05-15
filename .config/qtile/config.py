@@ -107,7 +107,7 @@ keys = [
 	# Start VT
 	Key(
 		[mod], "Return",
-		lazy.spawn("konsole --hide-menubar")
+		lazy.spawn("kitty")
 	),
 
 	# Lock screen
