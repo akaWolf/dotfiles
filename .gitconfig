@@ -7,7 +7,7 @@
 	default = simple
 
 [core]
-	editor = nano
+	editor = emacsclient
 
 [alias]
 	# basic
@@ -172,3 +172,7 @@
 	required = true
 [credential]
 	helper = store --file ~/.git-credentials
+[pull]
+	ff = only
+[init]
+	defaultBranch = master
