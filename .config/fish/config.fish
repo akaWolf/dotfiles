@@ -29,7 +29,7 @@ if set -q INSIDE_EMACS
   case vterm
   # see https://github.com/akermu/emacs-libvterm#directory-tracking
     function prompt_vterm -e fish_prompt
-      printf '\e]51;A%s\e\\' "$PWD"
+      printf '\e]51;A%s\e\\' (whoami)'@'(hostname)':'(pwd)
     end
   case '*,term:*'
     # see https://emacs.stackexchange.com/a/31446
