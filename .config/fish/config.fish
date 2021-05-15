@@ -20,7 +20,7 @@ set -xg HOSTNAME (hostname)
 gpg-connect-agent updatestartuptty /bye > /dev/null
 
 # nnn: edit all files in EDITOR
-set -xg NNN_USE_EDITOR 1
+set -xg NNN_OPTS 'edE'
 
 # emacs-specific
 if set -q INSIDE_EMACS
