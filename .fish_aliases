@@ -41,6 +41,7 @@ alias hd='od --format=x1 --address-radix=n'
 
 alias less='less --RAW-CONTROL-CHARS'
 
+# "--show-all" breaks colors, need a separate option to showing binary files
 alias less='bat --style=plain --paging=always --pager=less'
 
 alias cat='bat --style=plain --paging=never'
