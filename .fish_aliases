@@ -1,7 +1,7 @@
 test -r ~/.private.fish && source ~/.private.fish
 
 test -r ~/.dircolors && eval (dircolors -c ~/.dircolors) || eval (dircolors -c)
-alias ls='ls --color=auto'
+alias ls='exa --color=auto'
 alias l='ls'
 alias ll='ls -l'
 alias la='ls -a'
