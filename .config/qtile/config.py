@@ -7,7 +7,7 @@ from KeyboardLayoutCustom import KeyboardLayoutCustom
 
 mod = "mod4"
 screen_locker = "i3lock --nofork --color=000000"
-run_command = "dmenu_run -l 10 -fn '-16' -nf '#26292B' -nb '#FFFFFF' -sb '#606060' -sf '#FFFFFF'"
+run_command = "dmenu_run -l 10 -fn '-8' -nf '#26292B' -nb '#FFFFFF' -sb '#606060' -sf '#FFFFFF'"
 
 keys = [
 	# Switch between windows in current stack pane
@@ -171,7 +171,7 @@ widget_colors = dict(white = "FFFFFF", text = "26292B", gray = "606060", red = "
 widget_defaults = dict(
 	font = "ttf-droid",
 	fontshadow = None,
-	fontsize = 20,
+	fontsize = 30,
 	foreground = widget_colors['text'],
 	background = widget_colors['white'],
 	padding = 3
@@ -187,7 +187,7 @@ screens = [
 				#widget.WindowName(),
 				widget.TaskList(border = widget_colors['gray'], borderwidth = 1),
 				widget.Notify(),
-				widget.Systray(),
+				widget.Systray(icon_size = 25),
 				widget.Battery(battery_name = "BAT0", charge_char = "↑", discharge_char = "↓", energy_full_file = "energy_full", energy_now_file = "energy_now", error_message = "NB", power_now_file = "power_now", status_file = "status", update_delay = 5, format = "{char} {percent:2.0%}", background = widget_colors['white']),
 				widget.Sep(foreground = widget_colors['gray']),
 				widget.Backlight(backlight_name = "intel_backlight", brightness_file = "brightness", max_brightness_file = "max_brightness", markup = False, padding = None, step = 10, update_interval = 0.2, format = "{percent:2.0%}"),
@@ -201,7 +201,7 @@ screens = [
 				widget.Sep(foreground = widget_colors['gray']),
 				widget.Clock(format = "%Y-%m-%d %a %H.%M.%S"),
 			],
-			30,
+			40,
 		),
 	),
 ]
