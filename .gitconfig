@@ -143,6 +143,10 @@
 	smtpUser = akawolf0@gmail.com
 	smtpServerPort = 587
 
+[sendemail.linux]
+    tocmd ="`pwd`/scripts/get_maintainer.pl --nogit --nogit-fallback --norolestats --nol"
+    cccmd ="`pwd`/scripts/get_maintainer.pl --nogit --nogit-fallback --norolestats --nom"
+
 [color "diff"]
 	#commit
 	#frag
