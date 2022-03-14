@@ -27,6 +27,8 @@ alias e='emacs-client'
 
 alias n='nnn'
 
+alias xclip='xclip -selection clipboard'
+
 alias pastebinit='pastebinit -b https://paste.akawolf.org -a akaWolf'
 
 alias p0='picocom -b 115200 /dev/ttyUSB0'
