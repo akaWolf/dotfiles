@@ -22,6 +22,9 @@ gpg-connect-agent updatestartuptty /bye > /dev/null
 # nnn: edit all files in EDITOR
 set -xg NNN_OPTS 'edE'
 
+# mcfly: C-r interactive
+mcfly init fish | source
+
 # emacs-specific
 if set -q INSIDE_EMACS
   # dir tracking
