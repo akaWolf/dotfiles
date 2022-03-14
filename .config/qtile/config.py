@@ -1,6 +1,6 @@
-from libqtile.config import Key, Screen, Group, Drag, Click
+from libqtile.config import Key, Screen, Group, Drag, Click, Match
 from libqtile.command import lazy
-from libqtile import layout, bar, widget, hook
+from libqtile import layout, bar, widget, hook, qtile
 from libqtile.log_utils import logger
 
 from KeyboardLayoutCustom import KeyboardLayoutCustom
@@ -166,12 +166,14 @@ layouts = [
 	layout.Stack(num_stacks = 2)
 ]
 
+widget_colors = dict(white = "FFFFFF", text = "26292B", gray = "606060", red = "FF0000")
+
 widget_defaults = dict(
 	font = "ttf-droid",
 	fontshadow = None,
 	fontsize = 20,
-	foreground = "26292B",
-	background = "FFFFFF",
+	foreground = widget_colors['text'],
+	background = widget_colors['white'],
 	padding = 3
 )
 
@@ -179,24 +181,24 @@ screens = [
 	Screen(
 		bottom = bar.Bar(
 			[
-				widget.GroupBox(active = "26292B", inactive = "606060", urgent_text = "FF0000"),
-				widget.Sep(foreground = "606060"),
+				widget.GroupBox(active = widget_colors['text'], inactive = widget_colors['gray'], urgent_text = widget_colors['red']),
+				widget.Sep(foreground = widget_colors['gray']),
 				widget.Prompt(),
 				#widget.WindowName(),
-				widget.TaskList(border = "606060", borderwidth = 1),
+				widget.TaskList(border = widget_colors['gray'], borderwidth = 1),
 				widget.Notify(),
 				widget.Systray(),
-				widget.Battery(battery_name = "BAT0", charge_char = "↑", discharge_char = "↓", energy_full_file = "energy_full", energy_now_file = "energy_now", error_message = "NB", power_now_file = "power_now", status_file = "status", update_delay = 5, format = "{char} {percent:2.0%}"),
-				widget.Sep(foreground = "606060"),
+				widget.Battery(battery_name = "BAT0", charge_char = "↑", discharge_char = "↓", energy_full_file = "energy_full", energy_now_file = "energy_now", error_message = "NB", power_now_file = "power_now", status_file = "status", update_delay = 5, format = "{char} {percent:2.0%}", background = widget_colors['white']),
+				widget.Sep(foreground = widget_colors['gray']),
 				widget.Backlight(backlight_name = "intel_backlight", brightness_file = "brightness", max_brightness_file = "max_brightness", markup = False, padding = None, step = 10, update_interval = 0.2, format = "{percent:2.0%}"),
-				widget.Sep(foreground = "606060"),
+				widget.Sep(foreground = widget_colors['gray']),
 				KeyboardLayoutCustom(update_interval = 0.1),
-				#widget.KeyboardLayout(configured_keyboards = ["us intl", "ru"], update_interval = 0.1),
-				widget.Sep(foreground = "606060"),
+				#widget.KeyboardLayout(configured_keyboards = ["us", "ru"], update_interval = 0.1),
+				widget.Sep(foreground = widget_colors['gray']),
 				widget.CurrentLayout(),
-				#widget.Sep(foreground = "606060"),
+				#widget.Sep(foreground = widget_colors['gray']),
 				#widget.Volume(),
-				widget.Sep(foreground = "606060"),
+				widget.Sep(foreground = widget_colors['gray']),
 				widget.Clock(format = "%Y-%m-%d %a %H.%M.%S"),
 			],
 			30,
@@ -229,9 +231,10 @@ def dialogs(window):
 		window.floating = True
 
 @hook.subscribe.screen_change
-def screen_change_hook(qtile, ev):
+def screen_change_hook(qtile, ev=None):
 	# lazy.restart() doesnt work here
-	qtile.cmd_restart()
+	#qtile.cmd_restart()
+	pass
 
 @hook.subscribe.startup
 def startup_hook():
@@ -241,33 +244,32 @@ def startup_hook():
 def startup_once_hook():
 	startup_once()
 
-def main(qtile):
+@hook.subscribe.startup
+def main():
 	# set logging level
 	qtile.cmd_debug()
 
 	# disabled due very unexpected results at ThinkPad Gen 6
-	#screens_monitor_start()
+	screens_monitor_start()
 
 # Set default rules which defines floating windows
 floating_layout = layout.Floating(
 	float_rules=[
-		{"wmclass": x} for x in (
+                *layout.Floating.default_float_rules,
+        ] + [
+		Match(wm_class=x) for x in (
 			"confirm",
-			"dialog",
-			"download",
-			"error",
-			"file_progress",
-			"notification",
+#			"dialog",
+#			"download",
+#			"error",
+#			"file_progress",
+#			"notification",
 			"splash",
-			"toolbar"
+#			"toolbar"
 		)
-	] + [
-		{"wname": x} for x in (
-#			"",
-#			""
-		)
-	]
+        ]
 )
+
 # If a window requests to be fullscreen, it is automatically fullscreened. Set this to false if you only want windows to be fullscreen if you ask them to be.
 auto_fullscreen = True
 
@@ -276,6 +278,8 @@ home = os.path.expanduser("~")
 
 def setup_monitors(action=None, device=None):
 	if action == "change":
+		logger.debug("qtile: display change detected...")
+		return
 		# setup monitors with xrandr
 		import subprocess
 		subprocess.call(home + "/bin/swt")
