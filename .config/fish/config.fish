@@ -29,6 +29,9 @@ set -xg NNN_OPTS 'edE'
 # mcfly: C-r interactive
 mcfly init fish | source
 
+# pyenv: init $PATH
+pyenv init - | source
+
 # emacs-specific
 if set -q INSIDE_EMACS
   # dir tracking
