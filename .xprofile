@@ -10,6 +10,9 @@
 	# applications like Chromium
 	export XDG_CURRENT_DESKTOP=KDE
 	export KDE_SESSION_VERSION=5
+
+	# unscale twice scaled text in GDK
+	export GDK_DPI_SCALE=0.5
 }
 
 # set GTK+ theme
