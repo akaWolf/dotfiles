@@ -19,6 +19,10 @@ set -xg HOSTNAME (hostname)
 # refresh gpg-agent tty in case user switches into an X session
 gpg-connect-agent updatestartuptty /bye > /dev/null
 
+# set ssh-agent vars in case when using gpg as ssh-agent
+#set -xg SSH_AGENT_PID
+set -xg SSH_AUTH_SOCK "$XDG_RUNTIME_DIR/gnupg/S.gpg-agent.ssh"
+
 # nnn: edit all files in EDITOR
 set -xg NNN_OPTS 'edE'
 
