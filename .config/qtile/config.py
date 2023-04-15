@@ -126,6 +126,20 @@ keys = [
 		lazy.spawn("xbacklight -inc 10")
 	),
 
+	# Audio volume control
+	Key(
+		[], "XF86AudioRaiseVolume",
+		lazy.spawn("pactl set-sink-volume 0 +10%")
+	),
+	Key(
+		[], "XF86AudioLowerVolume",
+		lazy.spawn("pactl set-sink-volume 0 -10%")
+	),
+	Key(
+		[], "XF86AudioMute",
+		lazy.spawn("pactl set-sink-mute 0 toggle")
+	),
+
 	# Switch between displays
 	Key(
 		[mod], "n",
@@ -188,6 +202,8 @@ screens = [
 				widget.TaskList(border = widget_colors['gray'], borderwidth = 1),
 				widget.Notify(),
 				widget.Systray(icon_size = 25),
+                                widget.PulseVolume(update_interval = 0.1),
+                                widget.Sep(foreground = widget_colors['gray']),
 				widget.Battery(battery_name = "BAT0", charge_char = "↑", discharge_char = "↓", energy_full_file = "energy_full", energy_now_file = "energy_now", error_message = "NB", power_now_file = "power_now", status_file = "status", update_delay = 5, format = "{char} {percent:2.0%}", background = widget_colors['white']),
 				widget.Sep(foreground = widget_colors['gray']),
 				widget.Backlight(backlight_name = "intel_backlight", brightness_file = "brightness", max_brightness_file = "max_brightness", markup = False, padding = None, step = 10, update_interval = 0.2, format = "{percent:2.0%}"),
