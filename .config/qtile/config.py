@@ -101,7 +101,7 @@ keys = [
 	# PrintScreen
 	Key(
 		[], "Print",
-		lazy.spawn("spectacle")
+		lazy.spawn("spectacle -g -r")
 	),
 
 	# Start VT
