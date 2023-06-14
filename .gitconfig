@@ -4,7 +4,7 @@
 	signingkey = 159E508B1B40DF152320FC7D80D5EC717C13860B
 
 [push]
-	default = simple
+	default = current
 
 [core]
 	editor = emacsclient
@@ -175,7 +175,7 @@
 	process = git-lfs filter-process
 	required = true
 [credential]
-	helper = store --file ~/.git-credentials
+	helper = store
 [pull]
 	ff = only
 [init]
