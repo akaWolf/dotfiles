@@ -16,6 +16,9 @@ set -xg GPG_TTY $tty
 # set HOSTNAME env var for backward compatibility with bash
 set -xg HOSTNAME (hostname)
 
+# set bc config path
+set -xg BC_ENV_ARGS ~/.bc
+
 # refresh gpg-agent tty in case user switches into an X session
 gpg-connect-agent updatestartuptty /bye > /dev/null
 
