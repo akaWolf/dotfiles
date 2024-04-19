@@ -5,9 +5,10 @@
 
 [push]
 	default = current
+	autoSetupRemote = true
 
 [core]
-	editor = emacsclient
+	editor = env INSIDE_GIT=1 emacs-client
 
 [alias]
 	# basic
