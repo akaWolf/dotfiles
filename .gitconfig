@@ -155,6 +155,11 @@
 	#meta
 	new = green bold
 	old = red bold
+	meta = 11
+	frag = magenta bold
+	func = 146 bold
+	commit = yellow bold
+	whitespace = red reverse
 	#plain
 	#whitespace
 
