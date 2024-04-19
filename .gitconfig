@@ -186,3 +186,18 @@
 	ff = only
 [init]
 	defaultBranch = master
+
+[diff]
+        tool = difftastic
+
+[difftool]
+        prompt = false
+
+[difftool "difftastic"]
+        cmd = difft "$LOCAL" "$REMOTE"
+
+[pager]
+        difftool = true
+
+[alias]
+        dft = difftool
