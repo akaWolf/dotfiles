@@ -8,13 +8,22 @@
 	# simulate KDE5 session for using
 	# KDE services like kwallet by the
 	# applications like Chromium
-	export XDG_CURRENT_DESKTOP=KDE
 	export KDE_SESSION_VERSION=5
+	# explicitly set generic xdg desktop
+	# for make sure it using xdg-mime query
+	export XDG_CURRENT_DESKTOP=X-Generic
+
 
 	# unscale twice scaled text in GDK
-	export GDK_DPI_SCALE=0.5
+	export GDK_DPI_SCALE=0.25
+
+	# to make plasma respect Qt settings
+	export PLASMA_USE_QT_SCALING=1
 }
 
 # set GTK+ theme
 #export GTK_THEME=Breeze:dark
 # moved to ~/.config/gtk-3.0/settings.ini
+
+# unscale twice scaled text in GDK
+export GDK_DPI_SCALE=0.25
