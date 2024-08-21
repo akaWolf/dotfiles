@@ -101,7 +101,7 @@ keys = [
 	# PrintScreen
 	Key(
 		[], "Print",
-		lazy.spawn("spectacle -g -r")
+		lazy.spawn("flameshot gui")
 	),
 
 	# Start VT
