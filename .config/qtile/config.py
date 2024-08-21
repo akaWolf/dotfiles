@@ -1,5 +1,5 @@
 from libqtile.config import Key, Screen, Group, Drag, Click, Match
-from libqtile.command import lazy
+from libqtile.lazy import lazy
 from libqtile import layout, bar, widget, hook, qtile
 from libqtile.log_utils import logger
 
@@ -185,7 +185,7 @@ widget_colors = dict(white = "FFFFFF", text = "26292B", gray = "606060", red = "
 widget_defaults = dict(
 	font = "ttf-droid",
 	fontshadow = None,
-	fontsize = 30,
+	fontsize = 20,
 	foreground = widget_colors['text'],
 	background = widget_colors['white'],
 	padding = 3
