@@ -266,7 +266,7 @@ def main():
 	qtile.cmd_debug()
 
 	# disabled due very unexpected results at ThinkPad Gen 6
-	screens_monitor_start()
+	#screens_monitor_start()
 
 # Set default rules which defines floating windows
 floating_layout = layout.Floating(
