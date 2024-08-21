@@ -119,11 +119,11 @@ keys = [
 	# Backlight (brightness) control
 	Key(
 		[], "XF86MonBrightnessDown",
-		lazy.spawn("xbacklight -dec 10")
+		lazy.spawn("light -U 10")
 	),
 	Key(
 		[], "XF86MonBrightnessUp",
-		lazy.spawn("xbacklight -inc 10")
+		lazy.spawn("light -A 10")
 	),
 
 	# Audio volume control
