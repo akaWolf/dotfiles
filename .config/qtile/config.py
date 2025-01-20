@@ -2,12 +2,30 @@ from libqtile.config import Key, Screen, Group, Drag, Click, Match
 from libqtile.lazy import lazy
 from libqtile import layout, bar, widget, hook, qtile
 from libqtile.log_utils import logger
+from libqtile import qtile
 
-from KeyboardLayoutCustom import KeyboardLayoutCustom
+if qtile.core.name == "wayland":
+	from libqtile.backend.wayland import InputConfig
+	wl_input_rules = {
+		# it would be nice, but the standart widget.KeyboardLayout doesn't know about groups
+		# "type:keyboard": InputConfig(
+		# 	kb_layout="us,ru",
+		# 	kb_variant="intl-unicode,",
+                #         kb_options="compose:rctrl,terminate:ctrl_alt_bksp,grp:caps_toggle",
+		# ),
+		"type:touchpad": InputConfig(
+			natural_scroll=True,
+			tap=True,
+			click_method="clickfinger",
+		),
+	}
+
+if qtile.core.name == "x11":
+	from KeyboardLayoutCustom import KeyboardLayoutCustom
 
 mod = "mod4"
 screen_locker = "i3lock --nofork --color=000000"
-run_command = "dmenu_run -l 10 -fn '-8' -nf '#26292B' -nb '#FFFFFF' -sb '#606060' -sf '#FFFFFF'"
+run_command = "dmenu_run -l 10 -fn '-14' -nf '#26292B' -nb '#FFFFFF' -sb '#606060' -sf '#FFFFFF'"
 
 keys = [
 	# Switch between windows in current stack pane
@@ -157,6 +175,13 @@ keys = [
 		[mod], "m",
 		lazy.spawn("music.py")
 	),
+
+	# Switch layout
+	Key(
+		[], "Caps_Lock",
+		#lazy.spawn(run_command)
+                lazy.widget["keyboardlayout"].next_keyboard(), desc="Next keyboard layout."
+	),
 ]
 
 groups = [Group(i) for i in "asdfgzxcvb"]
@@ -200,24 +225,26 @@ screens = [
 				widget.Prompt(),
 				#widget.WindowName(),
 				widget.TaskList(border = widget_colors['gray'], borderwidth = 1),
-				widget.Notify(),
-				widget.Systray(icon_size = 25),
-                                widget.PulseVolume(update_interval = 0.1),
-                                widget.Sep(foreground = widget_colors['gray']),
-				widget.Battery(battery_name = "BAT0", charge_char = "↑", discharge_char = "↓", energy_full_file = "energy_full", energy_now_file = "energy_now", error_message = "NB", power_now_file = "power_now", status_file = "status", update_delay = 5, format = "{char} {percent:2.0%}", background = widget_colors['white']),
+				#widget.Notify(),
+				widget.Systray(icon_size = 20),
+				widget.StatusNotifier(icon_size = 20),
+				widget.PulseVolume(update_interval = 0.1),
 				widget.Sep(foreground = widget_colors['gray']),
-				widget.Backlight(backlight_name = "intel_backlight", brightness_file = "brightness", max_brightness_file = "max_brightness", markup = False, padding = None, step = 10, update_interval = 0.2, format = "{percent:2.0%}"),
+				widget.Battery(battery = "qcom-battmgr-bat", charge_char = "↑", discharge_char = "↓", energy_full_file = "energy_full", energy_now_file = "energy_now", error_message = "NB", power_now_file = "power_now", status_file = "status", update_delay = 5, format = "{char} {percent:2.0%}", background = widget_colors['white']),
 				widget.Sep(foreground = widget_colors['gray']),
-				KeyboardLayoutCustom(update_interval = 0.1),
-				#widget.KeyboardLayout(configured_keyboards = ["us", "ru"], update_interval = 0.1),
+				widget.Backlight(backlight_name = "backlight", brightness_file = "brightness", max_brightness_file = "max_brightness", markup = False, padding = None, step = 10, update_interval = 0.2, format = "{percent:2.0%}"),
 				widget.Sep(foreground = widget_colors['gray']),
-				widget.CurrentLayout(),
+				# it would be nice to use the same standart widget for X and Wayland, but custom user space xkb configuration doesn't work for X
+				# on the other side you have to write KeyboardLayoutCustom for Wayland if you want to display current keyboard group
+				KeyboardLayoutCustom(update_interval = 0.1) if qtile.core.name == "x11" else widget.KeyboardLayout(configured_keyboards = ["us intl-unicode", "ru"], option = "custom:caps_no_action,terminate:ctrl_alt_bksp,compose:rctrl", display_map = {"us intl-unicode": "us", "ru": "ru"}, update_interval = 0.1),
+				#widget.Sep(foreground = widget_colors['gray']),
+				#widget.CurrentLayout(),
 				#widget.Sep(foreground = widget_colors['gray']),
 				#widget.Volume(),
 				widget.Sep(foreground = widget_colors['gray']),
 				widget.Clock(format = "%Y-%m-%d %a %H.%M.%S"),
 			],
-			40,
+			30,
 		),
 	),
 ]
@@ -271,8 +298,8 @@ def main():
 # Set default rules which defines floating windows
 floating_layout = layout.Floating(
 	float_rules=[
-                *layout.Floating.default_float_rules,
-        ] + [
+		*layout.Floating.default_float_rules,
+	] + [
 		Match(wm_class=x) for x in (
 			"confirm",
 #			"dialog",
@@ -283,7 +310,7 @@ floating_layout = layout.Floating(
 			"splash",
 #			"toolbar"
 		)
-        ]
+	]
 )
 
 # If a window requests to be fullscreen, it is automatically fullscreened. Set this to false if you only want windows to be fullscreen if you ask them to be.
@@ -315,11 +342,16 @@ def screens_monitor_start():
 	observer.start()
 
 def startup():
-	runInBackground("feh --bg-scale " + home + "/theme_ntp_background.png", "set background")
+	if qtile.core.name == "x11":
+		runInBackground("feh --bg-scale " + home + "/theme_ntp_background.png", "set background")
+	else:
+		runInBackground("swaybg --mode fill --image " + home + "/theme_ntp_background.png", "set background")
 
 	runInBackground("xsetroot -cursor_name left_ptr", "set cursor")
 
-	runInBackground("setxkbmap -model pc104 -layout us,ru -variant intl-unicode, -option '' -option grp:caps_toggle -option terminate:ctrl_alt_bksp", "set layouts")
+	if qtile.core.name == "x11":
+		runInBackground("setxkbmap -option", "clear xkb options")
+		runInBackground("setxkbmap -model pc104 -layout us,ru -variant intl-unicode, -option compose:rctrl -option grp:caps_toggle -option terminate:ctrl_alt_bksp", "set xkb parameters")
 
 def startup_once():
 	import glob
@@ -347,6 +379,8 @@ def startup_once():
 	runInBackground("udiskie --smart-tray", "udisks2 automounter (mount helper)")
 
 	runInBackground("xss-lock -- " + screen_locker, "xss-lock subscribes to the systemd-events suspend, hibernate")
+
+	runInBackground("/usr/bin/kwalletd6", "KDE wallet manager")
 
 def runInBackground(prog, descr = None):
 	import subprocess
