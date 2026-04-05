@@ -11,7 +11,7 @@ if qtile.core.name == "wayland":
 		# "type:keyboard": InputConfig(
 		# 	kb_layout="us,ru",
 		# 	kb_variant="intl-unicode,",
-                #         kb_options="compose:rctrl,terminate:ctrl_alt_bksp,grp:caps_toggle",
+		#	kb_options="compose:rctrl,terminate:ctrl_alt_bksp,grp:caps_toggle",
 		# ),
 		"type:touchpad": InputConfig(
 			natural_scroll=True,
@@ -21,10 +21,15 @@ if qtile.core.name == "wayland":
 	}
 
 if qtile.core.name == "x11":
-	from KeyboardLayoutCustom import KeyboardLayoutCustom
+	from widgets.KeyboardLayoutCustom import KeyboardLayoutCustom
+
+from widgets.WireGuard import WireGuard
 
 mod = "mod4"
-screen_locker = "i3lock --nofork --color=000000"
+if qtile.core.name == "x11":
+	screen_locker = "i3lock --color=000000"
+else:
+	screen_locker = "swaylock --daemonize --show-failed-attempts --show-keyboard-layout --indicator-caps-lock --color 000000 --font-size 30 --indicator-radius 150"
 run_command = "dmenu_run -l 10 -fn '-14' -nf '#26292B' -nb '#FFFFFF' -sb '#606060' -sf '#FFFFFF'"
 
 keys = [
@@ -177,11 +182,11 @@ keys = [
 	),
 
 	# Switch layout
-	Key(
+	*([Key(
 		[], "Caps_Lock",
 		#lazy.spawn(run_command)
                 lazy.widget["keyboardlayout"].next_keyboard(), desc="Next keyboard layout."
-	),
+	)] if qtile.core.name == "wayland" else []),
 ]
 
 groups = [Group(i) for i in "asdfgzxcvb"]
@@ -218,16 +223,22 @@ widget_defaults = dict(
 
 screens = [
 	Screen(
+		#scale=1,
 		bottom = bar.Bar(
 			[
 				widget.GroupBox(active = widget_colors['text'], inactive = widget_colors['gray'], urgent_text = widget_colors['red']),
 				widget.Sep(foreground = widget_colors['gray']),
-				widget.Prompt(),
+				widget.Prompt(bell_style="visual"),
 				#widget.WindowName(),
 				widget.TaskList(border = widget_colors['gray'], borderwidth = 1),
 				#widget.Notify(),
-				widget.Systray(icon_size = 20),
+				*([widget.Systray(icon_size = 20)] if qtile.core.name == "x11" else []),
 				widget.StatusNotifier(icon_size = 20),
+				WireGuard(
+					popup_background=widget_defaults['background'],
+					popup_foreground=widget_defaults['foreground'],
+					popup_font=widget_defaults['font'],
+				),
 				widget.PulseVolume(update_interval = 0.1),
 				widget.Sep(foreground = widget_colors['gray']),
 				widget.Battery(battery = "qcom-battmgr-bat", charge_char = "↑", discharge_char = "↓", energy_full_file = "energy_full", energy_now_file = "energy_now", error_message = "NB", power_now_file = "power_now", status_file = "status", update_delay = 5, format = "{char} {percent:2.0%}", background = widget_colors['white']),
@@ -236,13 +247,13 @@ screens = [
 				widget.Sep(foreground = widget_colors['gray']),
 				# it would be nice to use the same standart widget for X and Wayland, but custom user space xkb configuration doesn't work for X
 				# on the other side you have to write KeyboardLayoutCustom for Wayland if you want to display current keyboard group
-				KeyboardLayoutCustom(update_interval = 0.1) if qtile.core.name == "x11" else widget.KeyboardLayout(configured_keyboards = ["us intl-unicode", "ru"], option = "custom:caps_no_action,terminate:ctrl_alt_bksp,compose:rctrl", display_map = {"us intl-unicode": "us", "ru": "ru"}, update_interval = 0.1),
+				KeyboardLayoutCustom(update_interval = 0.1) if qtile.core.name == "x11" else widget.KeyboardLayout(configured_keyboards = ["us intl-unicode", "ru"], option = "custom:caps_no_action,terminate:ctrl_alt_bksp", display_map = {"us intl-unicode": "us", "ru": "ru"}, update_interval = 0.1), #,compose:rctrl -- add after fix
 				#widget.Sep(foreground = widget_colors['gray']),
 				#widget.CurrentLayout(),
 				#widget.Sep(foreground = widget_colors['gray']),
 				#widget.Volume(),
 				widget.Sep(foreground = widget_colors['gray']),
-				widget.Clock(format = "%Y-%m-%d %a %H.%M.%S"),
+				widget.Clock(format = "%Y-%m-%d %a %H.%M.%S")
 			],
 			30,
 		),
@@ -269,9 +280,10 @@ focus_on_window_activation = "never"
 
 @hook.subscribe.client_new
 def dialogs(window):
-	if (window.window.get_wm_type() == "dialog"
-		or window.window.get_wm_transient_for()):
-		window.floating = True
+    if qtile.core.name == "x11":
+        if (window.window.get_wm_type() == "dialog"
+                or window.window.get_wm_transient_for()):
+            window.floating = True
 
 @hook.subscribe.screen_change
 def screen_change_hook(qtile, ev=None):
@@ -290,7 +302,7 @@ def startup_once_hook():
 @hook.subscribe.startup
 def main():
 	# set logging level
-	qtile.cmd_debug()
+	qtile.debug()
 
 	# disabled due very unexpected results at ThinkPad Gen 6
 	#screens_monitor_start()
@@ -344,16 +356,24 @@ def screens_monitor_start():
 def startup():
 	if qtile.core.name == "x11":
 		runInBackground("feh --bg-scale " + home + "/theme_ntp_background.png", "set background")
+		runInBackground("xsetroot -cursor_name left_ptr", "set cursor")
+		runInBackground("setxkbmap -option", "clear xkb options")
+		runInBackground("setxkbmap -model pc104 -layout us,ru -variant intl-unicode, -option grp:caps_toggle -option terminate:ctrl_alt_bksp", "set xkb parameters") # -option compose:rctrl
 	else:
 		runInBackground("swaybg --mode fill --image " + home + "/theme_ntp_background.png", "set background")
-
-	runInBackground("xsetroot -cursor_name left_ptr", "set cursor")
-
-	if qtile.core.name == "x11":
-		runInBackground("setxkbmap -option", "clear xkb options")
-		runInBackground("setxkbmap -model pc104 -layout us,ru -variant intl-unicode, -option compose:rctrl -option grp:caps_toggle -option terminate:ctrl_alt_bksp", "set xkb parameters")
+		runInBackground("wlr-randr --output eDP-1 --scale 1", "set scale")
+		runInBackground("systemctl --user import-environment WAYLAND_DISPLAY XDG_SESSION_TYPE XDG_CURRENT_DESKTOP", "import wayland env vars")
+		runInBackground("systemctl --user restart xdg-desktop-portal-wlr", "restart wlr portal service with correct env vars")
 
 def startup_once():
+	kwallet_env = None
+	if qtile.core.name == "wayland":
+		kwallet_env = {
+			"XDG_CURRENT_DESKTOP": "KDE",
+			"QT_QPA_PLATFORM": "wayland"
+		}
+	runInBackground("/usr/bin/kwalletd6", "KDE wallet manager", env=kwallet_env)
+
 	import glob
 	prog_files = glob.glob(home + "/.config/autostart/*.desktop")
 	progs = []
@@ -376,14 +396,29 @@ def startup_once():
 
 	runInBackground("/usr/lib/polkit-kde-authentication-agent-1", "authentication agent polkit-kde-agent")
 
-	runInBackground("udiskie --smart-tray", "udisks2 automounter (mount helper)")
+	runInBackground("udiskie --tray", "udisks2 automounter (mount helper)")
 
-	runInBackground("xss-lock -- " + screen_locker, "xss-lock subscribes to the systemd-events suspend, hibernate")
+	if qtile.core.name == "wayland":
+		runInBackground("mako --default-timeout 3000 --history 1", "start notification daemon")
 
-	runInBackground("/usr/bin/kwalletd6", "KDE wallet manager")
+	# Set up screen locking for suspend, hibernate, and idle
+	if qtile.core.name == "x11":
+		# xss-lock catches suspend, hibernate, and lock-session signals from logind
+		runInBackground(f"xss-lock -- {screen_locker}", "xss-lock for screen locking")
+	elif qtile.core.name == "wayland":
+		# swayidle catches the same signals for Wayland
+		# Use an f-string to correctly pass the screen_locker command
+		idle_cmd = f"swayidle -w lock '{screen_locker}' before-sleep '{screen_locker}'"
+		runInBackground(idle_cmd, "swayidle subscribes to logind events")
 
-def runInBackground(prog, descr = None):
+def runInBackground(prog, descr = None, env=None):
 	import subprocess
+	import os
+
+	# Get current environment and update it with the provided one
+	current_env = os.environ.copy()
+	if env:
+		current_env.update(env)
 
 	try:
 		progspl = prog.split(" ")
@@ -396,6 +431,6 @@ def runInBackground(prog, descr = None):
 		logger.info("\t" + descr)
 
 	try:
-		subprocess.Popen(progspl)
+		subprocess.Popen(progspl, env=current_env)
 	except:
 		logger.warning("qtile: error: can't start " + progname)

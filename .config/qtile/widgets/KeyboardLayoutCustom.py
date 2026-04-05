@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from libqtile.widget import base
-from X11SupportClass import X11SupportClass
+from widgets.X11SupportClass import X11SupportClass
 
 class KeyboardLayoutCustom(base.InLoopPollText):
 	"""Widget for changing (not yet) and displaying the current keyboard layout"""
