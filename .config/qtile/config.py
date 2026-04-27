@@ -7,12 +7,11 @@ from libqtile import qtile
 if qtile.core.name == "wayland":
 	from libqtile.backend.wayland import InputConfig
 	wl_input_rules = {
-		# it would be nice, but the standart widget.KeyboardLayout doesn't know about groups
-		# "type:keyboard": InputConfig(
-		# 	kb_layout="us,ru",
-		# 	kb_variant="intl-unicode,",
-		#	kb_options="compose:rctrl,terminate:ctrl_alt_bksp,grp:caps_toggle",
-		# ),
+		"type:keyboard": InputConfig(
+			kb_layout="us,ru",
+			kb_variant="intl-unicode,",
+			kb_options="terminate:ctrl_alt_bksp,grp:caps_toggle",
+		),
 		"type:touchpad": InputConfig(
 			natural_scroll=True,
 			tap=True,
@@ -22,6 +21,8 @@ if qtile.core.name == "wayland":
 
 if qtile.core.name == "x11":
 	from widgets.KeyboardLayoutCustom import KeyboardLayoutCustom
+else:
+	from widgets.KeyboardGroup import KeyboardGroup
 
 from widgets.WireGuard import WireGuard
 
@@ -181,12 +182,8 @@ keys = [
 		lazy.spawn("music.py")
 	),
 
-	# Switch layout
-	*([Key(
-		[], "Caps_Lock",
-		#lazy.spawn(run_command)
-                lazy.widget["keyboardlayout"].next_keyboard(), desc="Next keyboard layout."
-	)] if qtile.core.name == "wayland" else []),
+	# Layout switching is handled by grp:caps_toggle in InputConfig.
+	# Widget update is done via monkey-patched handle_keyboard_key (see main()).
 ]
 
 groups = [Group(i) for i in "asdfgzxcvb"]
@@ -201,6 +198,21 @@ for i in groups:
 	keys.append(
 		Key([mod, "shift"], i.name, lazy.window.togroup(i.name))
 	)
+
+# Cyrillic keysym duplicates so qtile hotkeys work on Russian layout (QWERTY → ЙЦУКЕН)
+_latin_to_cyrillic = {
+	"a": "Cyrillic_ef", "b": "Cyrillic_i", "c": "Cyrillic_es",
+	"d": "Cyrillic_ve", "f": "Cyrillic_a", "g": "Cyrillic_pe",
+	"h": "Cyrillic_er", "j": "Cyrillic_o", "k": "Cyrillic_el",
+	"l": "Cyrillic_de", "m": "Cyrillic_softsign", "n": "Cyrillic_te",
+	"q": "Cyrillic_shorti", "r": "Cyrillic_ka", "s": "Cyrillic_yeru",
+	"t": "Cyrillic_ie", "v": "Cyrillic_em", "w": "Cyrillic_tse",
+	"x": "Cyrillic_che", "y": "Cyrillic_en", "z": "Cyrillic_ya",
+}
+keys.extend(
+	Key(k.modifiers, _latin_to_cyrillic[k.key], *k.commands)
+	for k in list(keys) if k.key in _latin_to_cyrillic
+)
 
 dgroups_key_binder = None
 dgroups_app_rules = []
@@ -245,9 +257,7 @@ screens = [
 				widget.Sep(foreground = widget_colors['gray']),
 				widget.Backlight(backlight_name = "backlight", brightness_file = "brightness", max_brightness_file = "max_brightness", markup = False, padding = None, step = 10, update_interval = 0.2, format = "{percent:2.0%}"),
 				widget.Sep(foreground = widget_colors['gray']),
-				# it would be nice to use the same standart widget for X and Wayland, but custom user space xkb configuration doesn't work for X
-				# on the other side you have to write KeyboardLayoutCustom for Wayland if you want to display current keyboard group
-				KeyboardLayoutCustom(update_interval = 0.1) if qtile.core.name == "x11" else widget.KeyboardLayout(configured_keyboards = ["us intl-unicode", "ru"], option = "custom:caps_no_action,terminate:ctrl_alt_bksp", display_map = {"us intl-unicode": "us", "ru": "ru"}, update_interval = 0.1), #,compose:rctrl -- add after fix
+				KeyboardLayoutCustom(update_interval = 0.1) if qtile.core.name == "x11" else KeyboardGroup(configured_keyboards = ["us", "ru"], update_interval = 0.1),
 				#widget.Sep(foreground = widget_colors['gray']),
 				#widget.CurrentLayout(),
 				#widget.Sep(foreground = widget_colors['gray']),
@@ -303,6 +313,25 @@ def startup_once_hook():
 def main():
 	# set logging level
 	qtile.debug()
+
+	# Track layout changes on Wayland by intercepting ISO_Next_Group keysym
+	# directly in handle_keyboard_key. We return False so the C code does NOT
+	# set up a key repeat timer — the widget toggles exactly once per press.
+	if qtile.core.name == "wayland":
+		if not hasattr(qtile.core, '_original_handle_keyboard_key'):
+			qtile.core._original_handle_keyboard_key = qtile.core.handle_keyboard_key
+
+		original = qtile.core._original_handle_keyboard_key
+
+		def handle_keyboard_key_with_layout_tracking(keysym, mask):
+			if keysym == 0xfe08:  # XKB_KEY_ISO_Next_Group
+				w = qtile.widgets_map.get("keyboardgroup")
+				if w:
+					w.next_keyboard()
+				return False
+			return original(keysym, mask)
+
+		qtile.core.handle_keyboard_key = handle_keyboard_key_with_layout_tracking
 
 	# disabled due very unexpected results at ThinkPad Gen 6
 	#screens_monitor_start()
@@ -414,6 +443,7 @@ def startup_once():
 def runInBackground(prog, descr = None, env=None):
 	import subprocess
 	import os
+	import shlex
 
 	# Get current environment and update it with the provided one
 	current_env = os.environ.copy()
@@ -421,7 +451,7 @@ def runInBackground(prog, descr = None, env=None):
 		current_env.update(env)
 
 	try:
-		progspl = prog.split(" ")
+		progspl = shlex.split(prog)
 		progname = progspl[0]
 	except:
 		logger.warning("qtile: error: can't parse " + prog)
