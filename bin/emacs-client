@@ -28,14 +28,11 @@ fi
 # define parameters for emacsclient
 PARAMS=""
 
-# return a list of all frames on $DISPLAY
-emacsclient -e "(frames-on-display-list \"$DISPLAY\")" &>/dev/null
+# check if there are existing GUI frames (works on both X11 and Wayland)
+HAS_GUI=$(emacsclient -e "(seq-some #'display-graphic-p (frame-list))" 2>/dev/null)
 
-# open frames detected, so open files in current frame
-if [ $? -eq 0 ]; then
-    PARAMS="$PARAMS -t"
-# no open frames detected, so open new frame
-else
+# no GUI frames detected, so open new frame
+if [ "$HAS_GUI" != "t" ]; then
     PARAMS="$PARAMS -c"
 fi
 
