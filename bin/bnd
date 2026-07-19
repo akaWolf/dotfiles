@@ -1,0 +1,26 @@
+#!/bin/bash
+
+export RES_ID="$1"
+export BOUNDARY_ADDR="https://boundary.setka.work"
+export BOUNDARY_TOKEN="$(cat ~/boundary.token 2>/dev/null || true)"
+#boundary config get-token
+BOUND_CMD="boundary targets list -token=env://BOUNDARY_TOKEN -recursive -format=json"
+$BOUND_CMD > /dev/null 2>&1
+if [ $? -ne 0 ]
+then
+	echo "not auth, check your browser!!!"
+	export BOUNDARY_TOKEN="$(boundary authenticate oidc -format=json | jq -r '.item | .attributes | .token')"
+	echo "auth completed"
+	echo "$BOUNDARY_TOKEN" > ~/boundary.token
+fi
+if [ -z "$RES_ID" ]
+then
+	$BOUND_CMD | jq -r '.items | .[] | "\(.name): \(.id)"'
+	exit 0
+fi
+BOUND_OUT="$(boundary targets authorize-session -token=env://BOUNDARY_TOKEN -id=$RES_ID -format=json)"
+CRED="$(echo "$BOUND_OUT" | jq -r '.item | .credentials | .[]')"
+#echo "$(echo "$CRED" | jq -r --color-output '.credential_source')"
+echo "$(echo "$CRED" | jq -r '.secret | .decoded | to_entries[] | "\(.key): \(.value)"')"
+RES_TOKEN="$(echo "$BOUND_OUT" | jq -r --color-output '.item | .authorization_token')"
+boundary connect -token=env://BOUNDARY_TOKEN -authz-token=$RES_TOKEN

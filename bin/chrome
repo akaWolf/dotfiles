@@ -1,0 +1,6 @@
+#!/bin/sh
+
+export GOOGLE_DEFAULT_CLIENT_ID="77185425430.apps.googleusercontent.com"
+export GOOGLE_DEFAULT_CLIENT_SECRET="OTJgUOQcT7lO7GsGZq2G4IlT"
+exec libcamerify /usr/bin/chromium "$@" --force-device-scale-factor=1.8 --disable-features=GlobalShortcutsPortal
+# --password-store=kwallet5 --high-dpi-support=1 --force-device-scale-factor=1.5 --disable-gpu
