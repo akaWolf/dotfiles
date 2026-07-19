@@ -62,13 +62,12 @@ end
 
 # Upload files
 function up
-	set -l name (basename "$argv[1]")
-	if string match -q "*.*" "$name"
-		set ext .(echo "$name" | cut -d . -f 2)
-	else
-		set ext ""
-	end
-	curl --silent -b "uid=1; identifier=$BINIDENT" -F "file=@$argv[1]" -F "filename=$name" -F "api=1" https://bin.akawolf.org/u | awk "{print \"https://bin.akawolf.org/f/\"\$2\"$ext\"}"
+    set -l file "$argv[1]"
+
+    curl --silent \
+        -H "Authorization: Bearer $BINAPIKEY" \
+        -F "file=@$file" \
+        https://bin.akawolf.org/api/upload | jq -r '.urls.ext'
 end
 
 # Paste files
