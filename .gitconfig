@@ -1,5 +1,5 @@
 [user]
-	email = akawolf0@gmail.com
+	email = akaWolf0@gmail.com
 	name = Artjom Vejsel
 	signingkey = 159E508B1B40DF152320FC7D80D5EC717C13860B
 
@@ -226,3 +226,5 @@
 	hunk-header-file-style = red
 	hunk-header-line-number-style = "#067a00"
 	hunk-header-style = file line-number syntax
+[color]
+	ui = auto
