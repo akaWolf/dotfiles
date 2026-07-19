@@ -4,6 +4,15 @@ from libqtile import layout, bar, widget, hook, qtile
 from libqtile.log_utils import logger
 from libqtile import qtile
 
+import os
+
+# Hardware that exists only on the laptop (ThinkPad x13s). The desktops have
+# neither a battery nor a backlight, so the widgets and keybindings using them
+# are added conditionally and this one config works unchanged on every machine.
+BATTERY_NAME = "qcom-battmgr-bat"
+HAS_BATTERY = os.path.isdir(f"/sys/class/power_supply/{BATTERY_NAME}")
+HAS_BACKLIGHT = os.path.isdir("/sys/class/backlight") and bool(os.listdir("/sys/class/backlight"))
+
 if qtile.core.name == "wayland":
 	from libqtile.backend.wayland import InputConfig
 	wl_input_rules = {
@@ -143,15 +152,17 @@ keys = [
 		lazy.spawn(screen_locker)
 	),
 
-	# Backlight (brightness) control
-	Key(
-		[], "XF86MonBrightnessDown",
-		lazy.spawn("light -U 10")
-	),
-	Key(
-		[], "XF86MonBrightnessUp",
-		lazy.spawn("light -A 10")
-	),
+	# Backlight (brightness) control -- only where a backlight exists
+	*([
+		Key(
+			[], "XF86MonBrightnessDown",
+			lazy.spawn("light -U 10")
+		),
+		Key(
+			[], "XF86MonBrightnessUp",
+			lazy.spawn("light -A 10")
+		),
+	] if HAS_BACKLIGHT else []),
 
 	# Audio volume control
 	Key(
@@ -278,10 +289,14 @@ screens = [
 				),
 				widget.PulseVolume(update_interval = 0.1),
 				widget.Sep(foreground = widget_colors['gray']),
-				widget.Battery(battery = "qcom-battmgr-bat", charge_char = "↑", discharge_char = "↓", energy_full_file = "energy_full", energy_now_file = "energy_now", error_message = "NB", power_now_file = "power_now", status_file = "status", update_delay = 5, format = "{char} {percent:2.0%}", background = widget_colors['white']),
-				widget.Sep(foreground = widget_colors['gray']),
-				widget.Backlight(backlight_name = "backlight", brightness_file = "brightness", max_brightness_file = "max_brightness", markup = False, padding = None, step = 10, update_interval = 0.2, format = "{percent:2.0%}"),
-				widget.Sep(foreground = widget_colors['gray']),
+				*([
+					widget.Battery(battery = BATTERY_NAME, charge_char = "↑", discharge_char = "↓", energy_full_file = "energy_full", energy_now_file = "energy_now", error_message = "NB", power_now_file = "power_now", status_file = "status", update_delay = 5, format = "{char} {percent:2.0%}", background = widget_colors['white']),
+					widget.Sep(foreground = widget_colors['gray']),
+				] if HAS_BATTERY else []),
+				*([
+					widget.Backlight(backlight_name = "backlight", brightness_file = "brightness", max_brightness_file = "max_brightness", markup = False, padding = None, step = 10, update_interval = 0.2, format = "{percent:2.0%}"),
+					widget.Sep(foreground = widget_colors['gray']),
+				] if HAS_BACKLIGHT else []),
 				KeyboardLayoutCustom(update_interval = 0.1) if qtile.core.name == "x11" else KeyboardGroup(configured_keyboards = ["us", "ru"], update_interval = 0.1),
 				#widget.Sep(foreground = widget_colors['gray']),
 				#widget.CurrentLayout(),
