@@ -1,0 +1,7 @@
+# amneziawg configuration example
+
+active_cmd = "ip rule | grep 'not from all fwmark 0xca6c'"
+rx_cmd = "cat /proc/net/dev | grep -oP 'ag0:\\s*\\K\\d+'"
+tx_cmd = "cat /proc/net/dev | grep -oP 'ag0:\\s*(\\d+\\s+){8}\\K\\d+'"
+up_cmd = "ip link show ag0 >/dev/null 2>&1 && sudo /etc/wireguard/amneziawg-restore-rules.sh || sudo ag-quick up ag0"
+down_cmd = "ip link show ag0 >/dev/null 2>&1 && sudo /etc/wireguard/amneziawg-remove-rules.sh"
