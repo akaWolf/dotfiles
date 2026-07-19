@@ -1,6 +1,7 @@
 import os
 import subprocess
 from libqtile import widget
+from libqtile.log_utils import logger
 from libqtile.popup import Popup
 
 from widgets.wg_interface import is_active, get_statistics
@@ -71,6 +72,7 @@ class WireGuard(widget.Image):
 
     def mouse_enter(self, x, y):
         """Show popup on mouse enter with 2 second delay."""
+        logger.warning("WG.mouse_enter(%s,%s) timer=%s popup=%s", x, y, self.popup_timer, self.popup)
         # Cancel any existing timer
         if self.popup_timer:
             self.popup_timer.cancel()
@@ -117,6 +119,7 @@ class WireGuard(widget.Image):
 
     def show_stats(self):
         """Show stats popup."""
+        logger.warning("WG.show_stats text=%r", self.stats_text)
         # Already showing
         if self.popup:
             return
@@ -170,12 +173,18 @@ class WireGuard(widget.Image):
             # Set text in layout
             self.popup.layout.text = self.stats_text
 
+            # Order matters: place the window first, then paint into the
+            # drawer (clear → draw_text), reveal the window, then flush
+            # the cairo surface onto screen with draw(). Without the
+            # final draw() the surface contents are never copied out and
+            # the popup appears empty / invisible.
+            self.popup.place()
             self.popup.clear()
             self.popup.draw_text(x=padding, y=padding)
-            self.popup.place()
             self.popup.unhide()
+            self.popup.draw()
         except Exception:
-            pass
+            logger.exception("WG.show_stats failed")
 
     def hide_popup(self):
         """Hide stats popup."""
