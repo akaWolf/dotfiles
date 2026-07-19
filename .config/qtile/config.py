@@ -25,6 +25,9 @@ else:
 	from widgets.KeyboardGroup import KeyboardGroup
 
 from widgets.WireGuard import WireGuard
+from widgets.SwayncIcon import SwayncIcon
+from widgets.InetStatus import InetStatus
+#from widgets import wayland_hover_patch  # noqa: F401
 
 mod = "mod4"
 if qtile.core.name == "x11":
@@ -222,7 +225,7 @@ layouts = [
 	layout.Stack(num_stacks = 2)
 ]
 
-widget_colors = dict(white = "FFFFFF", text = "26292B", gray = "606060", red = "FF0000")
+widget_colors = dict(white = "FFFFFF", text = "26292B", gray = "606060", red = "FF0000", blue = "0D47A1")
 
 widget_defaults = dict(
 	font = "ttf-droid",
@@ -246,6 +249,28 @@ screens = [
 				#widget.Notify(),
 				*([widget.Systray(icon_size = 20)] if qtile.core.name == "x11" else []),
 				widget.StatusNotifier(icon_size = 20),
+				SwayncIcon(
+					update_interval = 0.3,
+					font = 'Symbols Nerd Font',
+					fontsize = 18,
+					markup = True,
+					tooltip_delay = 0.3,
+					tooltip_font = widget_defaults['font'],
+					tooltip_fontsize = 20,
+					tooltip_background = widget_defaults['background'],
+					tooltip_color = widget_defaults['foreground'],
+					mouse_callbacks = {
+						'Button1': lazy.spawn('swaync-client -t -sw'),
+					},
+				),
+				InetStatus(
+					update_interval = 5,
+					tooltip_delay = 0.3,
+					tooltip_font = widget_defaults['font'],
+					tooltip_fontsize = 20,
+					tooltip_background = widget_defaults['background'],
+					tooltip_color = widget_defaults['foreground'],
+				),
 				WireGuard(
 					popup_background=widget_defaults['background'],
 					popup_foreground=widget_defaults['foreground'],
@@ -391,8 +416,33 @@ def startup():
 	else:
 		runInBackground("swaybg --mode fill --image " + home + "/theme_ntp_background.png", "set background")
 		runInBackground("wlr-randr --output eDP-1 --scale 1", "set scale")
-		runInBackground("systemctl --user import-environment WAYLAND_DISPLAY XDG_SESSION_TYPE XDG_CURRENT_DESKTOP", "import wayland env vars")
-		runInBackground("systemctl --user restart xdg-desktop-portal-wlr", "restart wlr portal service with correct env vars")
+		# GNOME/KDE pattern: sync env to BOTH dbus daemon AND systemd-user
+		# manager via dbus-update-activation-environment --systemd, THEN
+		# activate graphical-session.target so units WantedBy that target
+		# (kb-tunnel and any other graphical-only services) come up with
+		# env already populated. The chain (&&) guarantees ordering.
+		# Bring up the graphical-session.target via a qtile-session anchor:
+		#  1. push env into BOTH systemd-user manager AND dbus-daemon
+		#     (dbus-update-activation-environment --systemd is supposed to do
+		#     both, but it has been unreliable here — we do them explicitly)
+		#  2. start qtile-session.target → Wants=graphical-session.target →
+		#     pulls in kb-tunnel, xdg-desktop-portal-*, etc.
+		#
+		# `runInBackground` does shlex.split+Popen WITHOUT shell=True, so a
+		# chain of `&&` MUST be wrapped in `sh -c '...'` to actually execute
+		# each stage.
+		runInBackground(
+			"sh -c '"
+			"systemctl --user import-environment "
+			"WAYLAND_DISPLAY DISPLAY XAUTHORITY XDG_SESSION_TYPE XDG_CURRENT_DESKTOP "
+			"XDG_RUNTIME_DIR DBUS_SESSION_BUS_ADDRESS "
+			"&& dbus-update-activation-environment "
+			"WAYLAND_DISPLAY DISPLAY XAUTHORITY XDG_SESSION_TYPE XDG_CURRENT_DESKTOP "
+			"XDG_RUNTIME_DIR DBUS_SESSION_BUS_ADDRESS "
+			"&& systemctl --user start qtile-session.target"
+			"'",
+			"sync env to systemd+dbus, activate qtile-session.target",
+		)
 
 def startup_once():
 	kwallet_env = None
@@ -428,7 +478,7 @@ def startup_once():
 	runInBackground("udiskie --tray", "udisks2 automounter (mount helper)")
 
 	if qtile.core.name == "wayland":
-		runInBackground("mako --default-timeout 3000 --history 1", "start notification daemon")
+		runInBackground("swaync", "start notification daemon")
 
 	# Set up screen locking for suspend, hibernate, and idle
 	if qtile.core.name == "x11":
