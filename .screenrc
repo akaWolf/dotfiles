@@ -3,3 +3,7 @@
 # emulator's main buffer, so the wheel scrolls back as in a normal shell.
 defscrollback 1000000
 termcapinfo xterm*|xterms|xs|rxvt|alacritty|foot|st*|tmux*|screen*|kitty* ti@:te@
+
+# Keep windows out of utmp so root wall broadcasts (smartd alerts) don't
+# spam every open window; they also disappear from who(1) and write(1).
+deflogin off
