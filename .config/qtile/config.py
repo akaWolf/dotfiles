@@ -259,7 +259,8 @@ screens = [
 				#widget.Notify(),
 				*([widget.Systray(icon_size = 20)] if qtile.core.name == "x11" else []),
 				widget.StatusNotifier(icon_size = 20),
-				SwayncIcon(
+				# swaync is a wayland-only daemon
+				*([SwayncIcon(
 					update_interval = 0.3,
 					font = 'Symbols Nerd Font',
 					fontsize = 18,
@@ -272,7 +273,7 @@ screens = [
 					mouse_callbacks = {
 						'Button1': lazy.spawn('swaync-client -t -sw'),
 					},
-				),
+				)] if qtile.core.name == "wayland" else []),
 				InetStatus(
 					update_interval = 5,
 					tooltip_delay = 0.3,
