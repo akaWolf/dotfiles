@@ -6,9 +6,8 @@ from libqtile import qtile
 
 import os
 
-# Hardware that exists only on the laptop (ThinkPad x13s). The desktops have
-# neither a battery nor a backlight, so the widgets and keybindings using them
-# are added conditionally and this one config works unchanged on every machine.
+# Laptop-only hardware (x13s); desktops have neither, so battery/backlight
+# widgets and keybindings are conditional.
 BATTERY_NAME = "qcom-battmgr-bat"
 HAS_BATTERY = os.path.isdir(f"/sys/class/power_supply/{BATTERY_NAME}")
 HAS_BACKLIGHT = os.path.isdir("/sys/class/backlight") and bool(os.listdir("/sys/class/backlight"))
