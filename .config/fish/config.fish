@@ -1,6 +1,19 @@
 # no welcome banner
 set -g fish_greeting
 
+# window title: user@host: path, like bash's \u@\h:\w — otherwise the theme
+# shows only the directory and you cannot tell which machine a window is on.
+# The INSIDE_EMACS block further down redefines this where a title would
+# corrupt the terminal, and that redefinition still wins because it runs later.
+function fish_title
+    set -l dir (string replace -r "^$HOME" '~' -- $PWD)
+    if test -n "$argv[1]"
+        echo "$USER@$hostname: $dir ($argv[1])"
+    else
+        echo "$USER@$hostname: $dir"
+    end
+end
+
 # load usefull aliases
 test -s ~/.fish_aliases && source ~/.fish_aliases || true
 
