@@ -1,3 +1,6 @@
+# no welcome banner
+set -g fish_greeting
+
 # load usefull aliases
 test -s ~/.fish_aliases && source ~/.fish_aliases || true
 
