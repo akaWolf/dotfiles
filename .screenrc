@@ -4,6 +4,9 @@
 defscrollback 1000000
 termcapinfo xterm*|xterms|xs|rxvt|alacritty|foot|st*|tmux*|screen*|kitty* ti@:te@
 
-# Keep windows out of utmp so root wall broadcasts (smartd alerts) don't
-# spam every open window; they also disappear from who(1) and write(1).
+# Keep windows out of utmp: half a dozen background sessions otherwise clutter
+# who(1) and w(1). Side effect: write(1) can no longer reach them.
+# This does NOT stop wall(1) broadcasts — those go to the attached client's own
+# tty and land on top of screen regardless. smartd's are silenced at the source
+# (services.smartd.notifications.wall.enable = false).
 deflogin off
