@@ -145,3 +145,28 @@ end
 
 # Add an "alert" alias for long running commands. Use like so: sleep 10; alert
 alias alert='notify-send --urgency=low -i (test (count $argv) = 0 && echo terminal || echo error) (history|head -n1|sed -e \'s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//\')'
+
+# attach a screen session, first dumping its detached-period history into the
+# terminal's own scrollback, so the wheel scrolls it like regular output
+function sra
+	if test (count $argv) = 0
+		echo "usage: sra <session>" >&2
+		return 1
+	end
+	set -l tmp (mktemp)
+	screen -S $argv[1] -X hardcopy -h $tmp
+	# -X returns before the daemon finishes writing; wait for the dump to settle
+	set -l sz -1
+	while true
+		set -l now (stat -c %s $tmp 2>/dev/null; or echo -2)
+		test "$now" = "$sz"; and break
+		set sz $now
+		sleep 0.1
+	end
+	# drop the final screenful: screen repaints it on attach anyway
+	head -n -(tput lines) $tmp
+	rm $tmp
+	# push the visible area up so the history lands in the scrollback
+	printf '\n%.0s' (seq (tput lines))
+	screen -r $argv[1]
+end
